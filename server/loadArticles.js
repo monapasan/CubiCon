@@ -16,13 +16,50 @@ Meteor.startup(function () {
               footerName: 'PARADIES',
               type: 'text',
               description: "To hope means to be ready at every moment for that which is not yet born, and yet not become desperate if there is no birth in our lifetime.",
+              position: 5,
               hexagonImgUrl: 'img/beach.png',
+              menuUrl: "img/Article1/SpiralIsland.png",
               content:{
                 article: "The mother-child relationship is paradoxical and, in a sense, tragic. It requires the most intense love on the mother's side, yet this very love must help the child grow away from the mother, and to become fully independent.",
                 audio : "",
                 video: "",
                 imgUrls:{
-                  menuUrl: "imgAricle1//spiralIsland.jpg",
+                  first: "someImg",
+                }
+              }
+            },
+            {
+              name: 'Mein eigenes Paradies',
+              shortName: 'RICHARD IOWA',
+              footerName: 'PARADIES',
+              type: 'text',
+              description: "To hope means to be ready at every moment for that which is not yet born, and yet not become desperate if there is no birth in our lifetime.",
+              position: 4,
+              hexagonImgUrl: 'img/beach.png',
+              menuUrl:"img/Article1/RichardIowa.png",
+              content:{
+                article: "The mother-child relationship is paradoxical and, in a sense, tragic. It requires the most intense love on the mother's side, yet this very love must help the child grow away from the mother, and to become fully independent.",
+                audio : "",
+                video: "",
+                imgUrls:{
+                  first: "someImg",
+                }
+              }
+            },
+            {
+              name: 'Mein eigenes Paradies',
+              shortName: 'MATHEW ALBANES',
+              footerName: 'PARADIES',
+              type: 'text',
+              description: "To hope means to be ready at every moment for that which is not yet born, and yet not become desperate if there is no birth in our lifetime.",
+              position: 3,
+              hexagonImgUrl: 'img/beach.png',
+              menuUrl:"img/Article1/MathewAlbanes.png",
+              content:{
+                article: "The mother-child relationship is paradoxical and, in a sense, tragic. It requires the most intense love on the mother's side, yet this very love must help the child grow away from the mother, and to become fully independent.",
+                audio : "",
+                video: "",
+                imgUrls:{
                   first: "someImg",
                 }
               }
@@ -33,47 +70,14 @@ Meteor.startup(function () {
               footerName: 'PARADIES',
               type: 'text',
               description: "To hope means to be ready at every moment for that which is not yet born, and yet not become desperate if there is no birth in our lifetime.",
+              position: 7,
               hexagonImgUrl: 'img/beach.png',
+              menuUrl:"img/Article1/DiyInseln.png",
               content:{
                 article: "The mother-child relationship is paradoxical and, in a sense, tragic. It requires the most intense love on the mother's side, yet this very love must help the child grow away from the mother, and to become fully independent.",
                 audio : "",
                 video: "",
                 imgUrls:{
-                  menuUrl:"img/Aricle1/richardIowa.jpg",
-                  first: "someImg",
-                }
-              }
-            },
-            {
-              name: 'Mein eigenes Paradies',
-              shortName: 'Diy Inseln',
-              footerName: 'PARADIES',
-              type: 'text',
-              description: "To hope means to be ready at every moment for that which is not yet born, and yet not become desperate if there is no birth in our lifetime.",
-              hexagonImgUrl: 'img/beach.png',
-              content:{
-                article: "The mother-child relationship is paradoxical and, in a sense, tragic. It requires the most intense love on the mother's side, yet this very love must help the child grow away from the mother, and to become fully independent.",
-                audio : "",
-                video: "",
-                imgUrls:{
-                  menuUrl:"img/Aricle1/mathewAlbanes.jpg",
-                  first: "someImg",
-                }
-              }
-            },
-            {
-              name: 'Mein eigenes Paradies',
-              shortName: 'Diy Inseln',
-              footerName: 'PARADIES',
-              type: 'text',
-              description: "To hope means to be ready at every moment for that which is not yet born, and yet not become desperate if there is no birth in our lifetime.",
-              hexagonImgUrl: 'img/beach.png',
-              content:{
-                article: "The mother-child relationship is paradoxical and, in a sense, tragic. It requires the most intense love on the mother's side, yet this very love must help the child grow away from the mother, and to become fully independent.",
-                audio : "",
-                video: "",
-                imgUrls:{
-                  menuUrl:"img/Aricle1/diyInseln.jpg",
                   first: "someImg",
                 }
               }

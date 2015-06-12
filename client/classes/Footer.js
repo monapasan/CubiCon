@@ -10,7 +10,7 @@ Meteor.startup(function(){
         // subclass Node
         Node.call(this);
         this.data = data;
-        this.numSections = data.sections.length;
+        //this.numSections = data.sections.length;
         // object to store the buttons
         this.buttons = {};
 

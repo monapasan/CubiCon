@@ -1,13 +1,16 @@
 
+
+
+
 // Options
 // ------------------------------
-@hex-width: 100px;
+@hex-width: 65px;
 
 // Other variables, No need to edit
 // ------------------------------
 // height: ( width x cos(30) ) x 2
-@hex-height: (@hex-width * cos(30deg)) * 2; 
-@hexrow-margin-bottom: 3px;
+@hex-height: (@hex-width * cos(30deg)) * 2;
+@hexrow-margin-bottom: 0px;
 @margin-sizing: (@hex-width * sin(30deg) / 2);
 
 
@@ -17,47 +20,47 @@
 .hexagon-wrap{
     padding-top: 50px;
     padding-bottom: 50px;
-  
+
 }
 .hexrow {
     white-space: nowrap;
-  
-    // // right/left margin set at (( width of child div x sin(30) ) / 2) 
-    // // makes a fairly tight fit; 
+
+    // // right/left margin set at (( width of child div x sin(30) ) / 2)
+    // // makes a fairly tight fit;
     // // a 3px bottom seems to match
-    margin: 0 @margin-sizing @hexrow-margin-bottom;
+    //margin: 0 @margin-sizing @hexrow-margin-bottom;
 }
 .hexrow > div {
-  
+
     width: @hex-width;
-    height: @hex-height; 
+    height: @hex-height;
     // // For margin:
     // // right/left = ( width x sin(30) ) makes no overlap
     // // right/left = (( width x sin(30) ) / 2) leaves a narrow separation
-    margin: 0 (@hex-width*sin(30deg)/2);
+    //margin: 0 (@hex-width*sin(30deg)/2);
     position: relative;
-    background-image: url(http://lorempixel.com/400/400/nature/);
+
     // left position: -1 x width x sin(30)
-    background-position: (-1) * @hex-width * sin(30deg) 0; 
+    background-position: (-1) * @hex-width * sin(30deg) 0;
     background-repeat: no-repeat;
-    line-height: @hex-height; 
+    line-height: @hex-height;
     color: #ffffff;
     text-align: center;
     display: inline-block;
 }
 .hexrow > div:nth-child(odd) {
     // width x cos(30) / 2
-  
-    top: @hex-width * cos(30deg) / 2; 
+
+    //top: @hex-width * cos(30deg) / 2;
 }
 
 .hexrow > div:nth-child(even) {
-  
+
     // -1 x( ( width x cos(30) / 2) + (hexrow bottom margin / 2))
-    top:  (-1) * ( (@hex-width * cos(30deg) / 2) + (@hexrow-margin-bottom / 2) ); 
+    //top:  (-1) * ( (@hex-width * cos(30deg) / 2) + (@hexrow-margin-bottom / 2) );
 }
 .hexrow > div > div:first-of-type {
-  
+
     position: absolute;
     width: 100%;
     height: 100%;
@@ -73,7 +76,7 @@
     content: '';
     position: absolute;
     // width of main + margin sizing (todo)
-    width: @hex-width * 2; 
+    width: @hex-width * 2;
     height: 100%;
     background-image: inherit;
     background-position: top left;
@@ -86,8 +89,8 @@
 }
 
 .hexrow > div > div:last-of-type {
-  
-  backface-visibility: hidden;
+
+
     content: '';
     position: absolute;
     width: 100%;
@@ -101,6 +104,7 @@
 }
 
 .hexrow > div > div:last-of-type:before {
+    backface-visibility: hidden;
     content: '';
     position: absolute;
     // starting width + margin sizing (todo)
@@ -124,41 +128,3 @@
     vertical-align: middle;
     white-space: normal;
 }
-
-// .hexrow:nth-child(2) > div:nth-child(1) > span {
-//     /*change some other settings*/
-//     margin: 0 -20px;
-//     font-size: .8em;
-//     font-weight: bold;
-//     color:red;
-// }
-
-// .hexrow:nth-child(2) > div:nth-child(2) {
-//     background-image: url(http://i.imgur.com/jeSPg.jpg);
-// }
-
-// .hexrow:nth-child(2) > div:nth-child(3) {
-    // background-image: url(http://i.imgur.com/Jwmxm.jpg);
-    // // you can shift a large background image, but it can get complicated
-    // // best to keep the image as the total width (200px) and height (174px)
-    // // that the hex would be.
-//     background-position: -150px -120px;
-//     opacity: .3;
-//     color: black;
-// }
-
-// .hexrow:nth-child(2) > div:nth-child(3) > div:before {
-//     // you can shift a large background image, but it can get complicated
-//     // best to keep the image as the total width (200px) and height (174px)
-//     // that the hex would be.
-//     background-position: -100px -120px; // the left shift is always less in the pseudo elements by the amount of the base shift
-// }
-
-// .hexrow:nth-child(2) > div:nth-child(4) {
-//     background-image: url(http://i.imgur.com/90EkV.jpg);
-//     background-position: -350px -120px;
-// }
-
-// .hexrow:nth-child(2) > div:nth-child(4) > div:before {
-//     background-position: -300px -120px;
-// }

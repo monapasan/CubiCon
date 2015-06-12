@@ -69,7 +69,7 @@ Meteor.startup(function(){
 	function makeBody(){
 		this.addChild()
 					.setDifferentialSize(0, -50)
-					.addChild(new App.HexMenu());
+					.addChild(new App.HexMenu(this.data));
 	}
 
 	App.MenuView  = MenuView;

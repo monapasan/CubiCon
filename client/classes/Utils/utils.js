@@ -6,7 +6,7 @@ Meteor.startup(function(){
 		var id = node.addComponent({
 			onUpdate: function(time) {
 				// Every frame, query transitionable state and set node opacity accordingly
-				var newOpacity = i ? trans.get()[i] : trans.get();
+				var newOpacity = i !== undefined ? trans.get()[i] : trans.get();
 				node.setOpacity(newOpacity);
 				if (trans.isActive()) node.requestUpdate(id);
 			}
