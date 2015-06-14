@@ -10,27 +10,51 @@ Meteor.startup(function(){
 	var ArticleSelectionBody = App.ArticleSelectionBody;
 	var Transitionable = Famous.Transitionable;
 	function MenuView(data) {
+		this.options = Object.create(MenuView.DEFAULT_PROPERTIES);
 		Node.call(this);
-	    this.currentArtikel = 0;
-	    this.data = data[this.currentArtikel];
+	    this.currentMagazin = 0;
+		this.currentArticle = 0;
 	    this.articelAmount = data.length;
 	    makeBg.call(this);
-		makeFooter.call(this);
-		makeBody.call(this);
-
+		this.magazines = [];
+		data.forEach(function(magazin, i){
+			var menu = this.addChild();
+			var footer = this.addChild();
+			var menuAlign = new Align(menu);
+			var footerAlign = new Align(footer);
+			this.magazines[i] = {
+				footer: makeFooter.call(this, footer.addChild(), magazin),
+				menu: makeHexMenuElements.call(this, menu.addChild(), magazin),
+				menuAlign: menuAlign,
+				footerAlign: footerAlign
+			};
+		}.bind(this));
+	    this.data = data[this.currentMagazin];
+		//this.description = makeDescriptionView.call(this);
+		//doControlsEvents();
 	}
 	MenuView.prototype = Object.create(Node.prototype);
 	MenuView.prototype.constructor = MenuView;
 	MenuView.prototype.onParentMount = function onParentMount(parent, parentId, index){
 		this.mount(parent, parentId + '/' + index);
-			// do stuff
 			this.hide();
 		return this;
+	};
+
+	MenuView.prototype.hideElementsFromAnotherArticle = function hideElementsFromAnotherArticle(){
+		this.magazines.forEach(function(magazin){
+/*				magazin.menu.setAlign(-1, 0, 0, {duration:1});
+			magazin.footer.setAlign(-1, 0, 0, {duration:1});*/
+			magazin.menu.hide();
+			magazin.footer.hide();
+		});
+
 	};
 
 	MenuView.prototype.onReceive = function onReceive(event, payload){
 		if(event ==="showMenu"){
 				this.show();
+				this.hideElementsFromAnotherArticle();
 				var prefix = new Transitionable([0.7, Utils.scaleMenuIn]);
 				var comp = this.addComponent({
 					onUpdate: function(time){
@@ -47,9 +71,29 @@ Meteor.startup(function(){
 				});
 				this.requestUpdate(comp);
 				prefix.set([1, 1], { duration: Utils.selectionMenuChangeTime});
-				this.currentArtikel = payload.id;
+
+				this.currentMagazin = payload.id;
+				showAppropriateMagazin.call(this);
+		}
+		if(event === "changeFooterArticle"){
+			this.currentArticle += 1;
+			if(this.currentArticle >= this.amountArticles)
+				this.currentArticle = 0;
+		}
+		if(event ===  "insideArticle"){
+			this.magazines[this.currentMagazin].menu.grids[this.currentArticle].grid.show();
 		}
 	};
+	MenuView.DEFAULT_PROPERTIES = {
+		footerSize:50
+	};
+
+	function showAppropriateMagazin(){
+		this.magazines[this.currentMagazin].menu.show();
+		this.magazines[this.currentMagazin].footer.show();
+		/*this.magazines[this.currentArticle].menu.setAlign(0,0,0, {duration:1});
+		this.magazines[this.currentArticle].footer.setAlign(0,0,0, {duration:1});*/
+	}
 	function makeBg(){
 		this.backgroundColor = new DOMElement(this, {
             classes: ['bg','articleMenu']/*,
@@ -58,19 +102,28 @@ Meteor.startup(function(){
             }*/
         });
 	}
-	function makeFooter(){
-		this.addChild()
+	function makeFooter(child, data){
+		var footer = this.addChild()
 				  	.setAlign(0.5, 1)
 				  	.setMountPoint(0.5, 1)
 				  	.setSizeMode(0, 1)
-					.setAbsoluteSize(undefined, 50)
-					.addChild(new App.HexFooter(this.data));
+					.setAbsoluteSize(undefined, this.options.footerSize)
+					.addChild(new App.HexFooter(data));
+/*		footer.addUIEvent("click");
+		Utils.addClickComponent(footer, "changeFooterArticle");*/
+		return footer;
 	}
-	function makeBody(){
-		this.addChild()
-					.setDifferentialSize(0, -50)
-					.addChild(new App.HexMenu(this.data));
+	function makeHexMenuElements(child, data){
+		return this.addChild()
+					.setDifferentialSize(0, -this.options.footerSize)
+					.addChild(new App.HexMenu(data));
 	}
+/*	function makeDescriptionView(){
+		var desc = this.addChild()
+						.setDifferentialSize(0, -this.options.footerSize)
+						.addChild(new App.ArticleDescriptionView(this.data));
+		return desc;
+	}*/
 
 	App.MenuView  = MenuView;
 });

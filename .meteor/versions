@@ -11,6 +11,7 @@ deps@1.0.7
 ejson@1.0.6
 famous@1.0.0
 fastclick@1.0.3
+fortawesome:fontawesome@4.3.0
 geojson-utils@1.0.3
 html-tools@1.0.4
 htmljs@1.0.4

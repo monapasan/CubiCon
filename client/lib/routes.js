@@ -2,10 +2,25 @@
   path: '/Twitterous',
   template: 'main'
 });*/
-Router.route('/', function () {
+/*Router.route('/', function () {
     Meteor.subscribe('articles');
   var data = Articles.find({}).fetch();
   this.render('main',{data:data});
+});
+*/
+Router.route('/', {
+
+   waitOn: function(){
+       return Meteor.subscribe('magazines');
+   },
+    data: function(){
+      return Magazines.find({}, {sort: {order: 1}}).fetch();
+    },
+
+    action: function(){
+        this.render('main');
+    }
+
 });
 /*
 Router.route('/:_id', function () {

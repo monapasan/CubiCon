@@ -1,5 +1,5 @@
 Meteor.startup(function () {
-    Meteor.publish("articles", function () {
-      return Articles.find({});
+    Meteor.publish("magazines", function () {
+      return Magazines.find({});
     });
 });

@@ -1,3 +1,12 @@
+@footerWidth: 50px;
+@font-face {
+	font-family: BebasNeue;
+	src: url("fonts/Bebas/BebasNeue.otf") format("opentype");
+}
+@font-face {
+	font-family: 'PT Sans Regular Regular';
+	src: url("PT_Sans-Web-Regular.ttf") format("truetype");
+}
 .arrowDown {
 	background: url('icons/arrowNavDown.png') no-repeat center;
 }
@@ -35,22 +44,48 @@
 	text-align: center;
 	overflow-y:hidden;
 	&.article-name{
-		font-family: Consolas, monaco, monospace;
+		font-family: BebasNeue, monaco, monospace;
 		color: white;
 		line-height: 35px;
 		font-size: 35px;
+		font-weight: normal;
 	}
 	&.description{
 		// font-style: italic;
-		font-family: Papyrus, fantasy;
+		font-family: 'PT Sans Regular';
+		font-weight: normal;
 		color: white;
 		line-height: 20px;
-		font-size: 20px;
+		font-size: 21px;
+	}
+	&.article-menu{
+		font-family: 'PT Sans Regular';
+		font-weight: normal;
+		color: rgb(17, 22, 22);
+		line-height: 20px;
+		font-size: 21px;
+	}
+}
+.article-description{
+	text-align: center;
+	&.name{
+		font-family: BebasNeue;
+		line-height: 28px;
+		font-size: 28px;
+		color: #23232e;
+	}
+	&.description{
+		font-family: 'PT Sans Regular';
+		color: #15191c;
+		line-height: 1.4em;
+		font-size: 1.1em;
+		font-weight: 500;
 	}
 }
 .release{
+	text-align: center;
 	color:white;
-	font-family: 'Franklin Gothic Medium', 'Franklin Gothic', 'ITC Franklin Gothic', Arial, sans-serif;
+	font-family: BebasNeue;
 	font-size: 30px;
 }
 
@@ -61,4 +96,35 @@
 }
 .hexEl{
 	display: inline-flex;
+}
+
+.hexFooter {
+	text-align: center;
+	line-height: @footerWidth - 15;
+	font-size: 23px;
+	font-family: BebasNeue;
+	color:#29272e;
+	&:before,&:after {
+	    width: 0;
+	    content:'';
+	    height: 0;
+	    position:absolute;
+	    border-left: @footerWidth/2 solid transparent;
+	  	border-right: @footerWidth/2 solid transparent;
+	    border-bottom: @footerWidth  solid #29272e;
+	}
+	&:before{
+	    left:-@footerWidth / 2;
+	}
+	&:after{
+	    top:0px;
+		right:-@footerWidth / 2;
+	}
+	& i {
+		/*position: absolute;
+		bottom: 0px;*/
+		font-size:20px;
+	}
+
+
 }

@@ -4,7 +4,7 @@
 
 // Options
 // ------------------------------
-@hex-width: 65px;
+@hex-width: 60px;
 
 // Other variables, No need to edit
 // ------------------------------
@@ -24,7 +24,9 @@
 }
 .hexrow {
     white-space: nowrap;
-
+    font-family: BebasNeue;
+    font-size: 25px;
+    font-weight: 100;
     // // right/left margin set at (( width of child div x sin(30) ) / 2)
     // // makes a fairly tight fit;
     // // a 3px bottom seems to match
@@ -69,6 +71,7 @@
     z-index: -1;
     overflow: hidden;
     background-image: inherit;
+    background-color: inherit;
     transform:rotate(60deg);
 }
 
@@ -79,6 +82,7 @@
     width: @hex-width * 2;
     height: 100%;
     background-image: inherit;
+    background-color: inherit;
     background-position: top left;
     background-repeat: no-repeat;
     bottom: 0;
@@ -100,6 +104,7 @@
     z-index: -2;
     overflow: hidden;
     background-image: inherit;
+    background-color: inherit;
     transform:rotate(-60deg);
 }
 
@@ -111,6 +116,7 @@
     width: @hex-width * 2;
     height: 100%;
     background-image: inherit;
+    background-color: inherit;
     background-position: top left;
     background-repeat: no-repeat;
     bottom: 0;

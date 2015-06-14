@@ -1,3 +1,4 @@
+data  = Magazines.find().fetch();
 Template.main.rendered = function() {
     var scene;
     Famous.FamousEngine.init();

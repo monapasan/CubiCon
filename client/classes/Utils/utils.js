@@ -24,8 +24,8 @@ Meteor.startup(function(){
 		el.addComponent({
 			onReceive: function(event, payload){
 				if(event == "click"){
-					el.emit(emitString, {payload: payload});
 					payload.stopPropagation();
+					el.emit(emitString, {payload: payload});
 				}
 			}.bind(this)
 		});

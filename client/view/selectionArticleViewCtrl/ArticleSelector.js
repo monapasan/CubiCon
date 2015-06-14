@@ -49,7 +49,7 @@ Meteor.startup(function(){
 		if(event ===  "changeArticle"){
 			this.changeArticle(payload.to, payload.from);
 		}
-		if(event === "goInsideArticle"){
+		if(event === "goInsideMagazine"){
 			//Utils.fadingOut(this, prefix);
 			var comp = this.addComponent({
 				onUpdate: function(time){
@@ -126,7 +126,7 @@ Meteor.startup(function(){
 		        .setPosition(0, 50);
 			result[i] = {
 				align: new Align(child),
-				artikel: child.addChild(new ArticleSelectionBody(this.data[i], i))
+				article: child.addChild(new ArticleSelectionBody(this.data[i], i))
 			};
 
 	    }.bind(this));

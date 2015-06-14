@@ -8,7 +8,7 @@ Meteor.startup(function(){
         // subclass Node
         Node.call(this);
         this.data = data;
-        this.articleNumber = i;
+        this.currentArticle = i;
         // object to store the buttons
         this.buttons = {};
         _createHexagon.call(this);
@@ -27,11 +27,11 @@ Meteor.startup(function(){
 		.setAbsoluteSize(300, null)
 		.setProportionalSize(null, 0.37)
     }*/
-    ArticleSelectionBody.prototype.onReceive = function onReceive (event, payload) {
+/*    ArticleSelectionBody.prototype.onReceive = function onReceive (event, payload) {
         if(event == 'click'){
-            this.emit("goInsideArticle",{number: this.articleNumber});
+            this.emit("goInsideMagazine",{number: this.currentArticle});
         }
-    };
+    };*/
     function _createHexagon(){
     	var dataEl;
     	var width,height,type = this.data.imgUrl.split(".")[1];
@@ -67,14 +67,16 @@ Meteor.startup(function(){
     		classes: ["release"]
     	});
         el.addUIEvent('click');
-        el.addComponent({
+        var comp = {
             onReceive: function(event, payload){
                 if(event == "click"){
                     payload.stopPropagation();
-                    this.emit("goInsideArticle");
+                    this.emit("goInsideMagazine");
                 }
             }.bind(this)
-        });
+        };
+        el.addComponent(comp);
+        dateNode.addComponent(comp);
         this.hexEl = el;
     	/*var data = new DOMElement(el,{
     		tagName:'h2',
