@@ -64,7 +64,7 @@ Meteor.startup(function(){
     	dataEl = new DOMElement(dateNode, {
     		tagName:'h2',
     		content: this.data.date,
-    		classes: ["release"]
+    		classes: ['release','magazine-selection']
     	});
         el.addUIEvent('click');
         var comp = {
@@ -93,7 +93,7 @@ Meteor.startup(function(){
 	    							  .setMountPoint(0.5,0);
 		var nameEl = new DOMElement(nameNode,{
 			tagName:'h1',
-			classes:['article-name', 'article-selection'],
+			classes:['article-name', 'magazine-selection'],
 			content: this.data.name
 		});
     }
@@ -104,7 +104,7 @@ Meteor.startup(function(){
     										 .setMountPoint(0.5, 0);
 		var descriptionEl = new DOMElement(descriptionNode,{
 			tagName: "h2",
-			classes: ['description','article-selection'],
+			classes: ['description','magazine-selection'],
 			content: this.data.description
 		});
     }

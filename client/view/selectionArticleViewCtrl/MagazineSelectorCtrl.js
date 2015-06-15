@@ -13,9 +13,9 @@ Meteor.startup(function(){
 	function SelectionView(data) {
 		Node.call(this);
 
-	    this.currentArticle = 0;
+	    this.currentMagazine = 0;
 	    this.data = data;
-	    //this.currentSection = data[this.currentArticle]._id;
+	    //this.currentSection = data[this.currentMagazine]._id;
 	    this.articleAmount = data.length;
 		this.addUIEvent("click");
 	    makeBackground.call(this);
@@ -28,30 +28,30 @@ Meteor.startup(function(){
 	SelectionView.prototype.constructor = SelectionView;
 	SelectionView.prototype.onReceive = function onReceive (event, payload) {
 		var prefix = new Transitionable([1,1]);
-		var changeArticle = event === 'selectFooter' ? "down" : event === 'selectHeader' ? "up" : undefined;
-		if (changeArticle) {
+		var changeMagazine = event === 'selectFooter' ? "down" : event === 'selectHeader' ? "up" : undefined;
+		if (changeMagazine) {
 			var to;
 
-		    if(changeArticle == 'down')
-		     	to = this.currentArticle + 1;
-		    else if(changeArticle == 'up')
-		     	to = this.currentArticle - 1;
+		    if(changeMagazine == 'down')
+		     	to = this.currentMagazine + 1;
+		    else if(changeMagazine == 'up')
+		     	to = this.currentMagazine - 1;
 		    else
 		    	this.emit('goToAnotherView',{href: payload.node.getParent().data._id});
 		    if(to >= this.articleAmount || to < 0){
 		     	return;
 		    }
-		    this.emit('changeArticle', {
-		        from: this.currentArticle,
+		    this.emit('changeMagazine', {
+		        from: this.currentMagazine,
 		        to: to
 		    });
 		}
-		if(event ===  "changeArticle"){
-			this.changeArticle(payload.to, payload.from);
+		if(event ===  "changeMagazine"){
+			this.changeMagazine(payload.to, payload.from);
 		}
 		if(event === "goInsideMagazine"){
 			//Utils.fadingOut(this, prefix);
-			var comp = this.addComponent({
+/*			var comp = this.addComponent({
 				onUpdate: function(time){
 					var newSize = prefix.get()[1];
 					var newOpacity = prefix.get()[0];
@@ -66,9 +66,9 @@ Meteor.startup(function(){
 			});
 			this.requestUpdate(comp);
 			prefix.set([0.7, Utils.scaleMenuOut], { duration: Utils.selectionMenuChangeTime}, function(){
-				this.emit("showMenu",{id: this.currentArticle});
-				this.hide();
-			}.bind(this));
+			}.bind(this));*/
+			this.emit("showMenu",{id: this.currentMagazine});
+			this.hide();
 			// this.setScale(1.5,1.5)
 			// this.hide();
 		}
@@ -78,12 +78,12 @@ Meteor.startup(function(){
 	// twitter is added to the scene graph.
 /*	SelectionView.prototype.onParentMount = function onMount(parent, id) {
    		Node.prototype.onParentMount.call(this, parent, id);
-	   this.emit('changeArticle', {from: null, to: this.currentArticle});
+	   this.emit('changeMagazine', {from: null, to: this.currentMagazine});
 	};*/
 	SelectionView.prototype.onParentMount = function onParentMount (parent, parentId, index) {
     	this.mount(parent, parentId + '/' + index);
     	// do stuff
-		this.emit('changeArticle', {from: null, to: this.currentArticle});
+		this.emit('changeMagazine', {from: null, to: this.currentMagazine});
    		return this;
 	};
 	SelectionView.prototype.onMount = function onMount (parent, id) {
@@ -132,7 +132,7 @@ Meteor.startup(function(){
 	    }.bind(this));
 	    return result;
 	}
-	SelectionView.prototype.changeArticle = function changeArticle (to, from) {
+	SelectionView.prototype.changeMagazine = function changeMagazine (to, from) {
 		var myOpacityChanger = new Transitionable([1, 1]);
 		//var myOpacityChangerSecond = new Transitionable(1);
 		var direction = from === null ? "first" : to > from ? true : false;
@@ -175,7 +175,7 @@ Meteor.startup(function(){
 			//myOpacityChangerSecond.set(1, { duration: 500});
 
 	    }
-	    this.currentArticle = to;
+	    this.currentMagazine = to;
 	};
 
 	function makeHeader() {

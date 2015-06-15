@@ -40,30 +40,33 @@
 		background: url("hexMenuBg.jpg") no-repeat;
 	}
 }
-.article-selection{
+.magazine-selection{
 	text-align: center;
 	overflow-y:hidden;
+	color:#F4E1E1;
 	&.article-name{
 		font-family: BebasNeue, monaco, monospace;
-		color: white;
-		line-height: 35px;
-		font-size: 35px;
+		line-height: 6vh;
+		font-size: 6vh;
 		font-weight: normal;
 	}
 	&.description{
 		// font-style: italic;
 		font-family: 'PT Sans Regular';
 		font-weight: normal;
-		color: white;
-		line-height: 20px;
-		font-size: 21px;
+		line-height: 3.5vh;
+		font-size: 3.5vh;
 	}
 	&.article-menu{
 		font-family: 'PT Sans Regular';
 		font-weight: normal;
 		color: rgb(17, 22, 22);
-		line-height: 20px;
-		font-size: 21px;
+		line-height: 3.5vh;
+		font-size: 3.5vh;
+	}
+	&.release{
+		font-family: BebasNeue;
+		font-size: 5.5vh;
 	}
 }
 .article-description{
@@ -82,14 +85,10 @@
 		font-weight: 500;
 	}
 }
-.release{
-	text-align: center;
-	color:white;
-	font-family: BebasNeue;
-	font-size: 30px;
-}
 
 .articleHex{
+	width: 70vh;
+	height:40vh;
 	-ms-transform: scale(0.5,0.5); /* IE 9 */
 	-webkit-transform: scale(0.5,0.5); /* Safari */
 	transform: scale(0.5,0.5);

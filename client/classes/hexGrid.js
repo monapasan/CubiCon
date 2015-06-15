@@ -33,7 +33,7 @@ Meteor.startup(function(){
 	HexGrid.prototype.setOptions = function setOptions(options){
 		if(!options) return;
 		if(options.currentArticle) this.options.currentArticle = options.currentArticle;
-	}
+	};
 	HexGrid.DEFAULT_PROPERTIES = {
 	    headerSize: 100,
 	    footerSize: 100,
@@ -80,7 +80,7 @@ Meteor.startup(function(){
 			//	        '<span><h3>' + data.shortName.toUpperCase() + '</h3></span><div></div><div></div></div></div>');
 			el.setContent(
 				'<div class="hexrow">'+
-					'<div style="background-color:' + "#9DEC61" + /*url(img/Mandarins.jpg);*/'">' +
+					'<div style="background-color:' + this.data.colorScheme + /*url(img/Mandarins.jpg);*/'">' +
 						'<span>' + data.shortName.toUpperCase() + '</span>' +
 						'<div></div><div></div>' +
 					'</div>' +

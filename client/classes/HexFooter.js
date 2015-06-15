@@ -22,7 +22,10 @@ Meteor.startup(function(){
     HexFooter.prototype = Object.create(Node.prototype);
 
     HexFooter.prototype.onReceive = function onReceive(event, payload){
-            if(event === "changeFooterArticle") {
+            if(event === "changeArticle") {
+                if(!this.isShown()){
+                    return;
+                }
                 console.log(event,this.currentArticle);
                 this.currentArticle +=1;
                 if(this.currentArticle >= this.articleAmount) this.currentArticle = 0;
@@ -46,9 +49,9 @@ Meteor.startup(function(){
             content:content
         });
         el.addUIEvent("click");
-        Utils.addClickComponent(el, "changeFooterArticle");
+        Utils.addClickComponent(el, "changeArticle");
 /*        el.addUIEvent("click");
-        Utils.addClickComponent(el, "changeFooterArticle");*/
+        Utils.addClickComponent(el, "changeArticle");*/
         this.backgroundColor.setProperty("backgroundColor", this.data.articles[this.currentArticle].colorScheme);
         var arrows = el.addChild().setProportionalSize(1,0.3).setAlign(0,0.5).setMountPoint(0,0.3);
         new DOMElement(arrows,{
