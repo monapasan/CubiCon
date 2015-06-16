@@ -8,6 +8,7 @@ Meteor.startup(function(){
         this.setOptions(options);
 		this.data = data.articles[this.options.currentArticle];
         createHexagon.call(this);
+        this.responsiveNode = this.addChild();
         createLine.call(this);
         createDescription.call(this);
 
@@ -31,13 +32,14 @@ Meteor.startup(function(){
             '</div>');
         this.gestures = new GestureHandler(hex);
         this.gestures.on('tap', emitGoInsideArticle.bind(this));
+        return hex;
     }
     function emitGoInsideArticle(){
         this.emit("insideArticle",{node: this});
     }
     // new App.TitleWithLine({string: this.data.name})
     function createLine(){
-        var title = this.addChild()
+        var title = this.responsiveNode.addChild()
                         .setProportionalSize(1, 0.1)
                         .setAlign(0.5,0.52)
                         .setMountPoint(0.5, 1);
@@ -55,10 +57,14 @@ Meteor.startup(function(){
                 'background-color':'#222229'
                 }
             });
+        if(window.screen.height < 490){
+            this.responsiveNode.setPosition(0, 30);
+        }
+        return title;
     }
     function createDescription(){
-    	var descriptionNode = this.addChild().setDifferentialSize(-100,0)
-    										 .setProportionalSize(1, 0.5)
+    	var descriptionNode = this.responsiveNode.addChild().setDifferentialSize(-100,0)
+    										 .setProportionalSize(1, 0.4)
     										 .setAlign(0.5, 0.52)
     										 .setMountPoint(0.5, 0.05);
 		var descriptionEl = new DOMElement(descriptionNode,{
@@ -66,6 +72,7 @@ Meteor.startup(function(){
 			classes: ['article-description','description'],
 			content: this.data.description
 		});
+        return descriptionNode;
     }
      App.ArticleDescriptionView = ArticleDescriptionView;
 });

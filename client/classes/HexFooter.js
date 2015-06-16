@@ -2,7 +2,7 @@ Meteor.startup(function(){
     var NavButton = App.NavButton;
     var Node = Famous.Node;
     var DOMElement = Famous.DOMElement;
-
+    var GestureHandler = Famous.GestureHandler;
     // the number of sections in the app
 
     // the footer will hold the nav buttons
@@ -48,10 +48,12 @@ Meteor.startup(function(){
             classes:['hexFooter'],
             content:content
         });
-        el.addUIEvent("click");
-        Utils.addClickComponent(el, "changeArticle");
-/*        el.addUIEvent("click");
-        Utils.addClickComponent(el, "changeArticle");*/
+        el.setP
+        var gestures = new GestureHandler(el);
+        gestures.on('tap', function(){
+            this.emit("changeArticle");
+        }.bind(this));
+        
         this.backgroundColor.setProperty("backgroundColor", this.data.articles[this.currentArticle].colorScheme);
         var arrows = el.addChild().setProportionalSize(1,0.3).setAlign(0,0.5).setMountPoint(0,0.3);
         new DOMElement(arrows,{

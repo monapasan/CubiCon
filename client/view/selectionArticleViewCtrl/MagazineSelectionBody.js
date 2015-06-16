@@ -1,6 +1,7 @@
 Meteor.startup(function(){
     var Node = Famous.Node;
     var DOMElement = Famous.DOMElement;
+    var GestureHandler = Famous.GestureHandler;
     // the number of sections in the app
 
     // the footer will hold the nav buttons
@@ -11,9 +12,11 @@ Meteor.startup(function(){
         this.currentArticle = i;
         // object to store the buttons
         this.buttons = {};
+        this.eventNode = this.addChild();
         _createHexagon.call(this);
         _createName.call(this);
         _createDescription.call(this);
+        //_bindEvents.call(this);
         // for every section create a NavButton
         // and set its size and align
 /*        data.sections.forEach(function (section, i) {
@@ -42,10 +45,11 @@ Meteor.startup(function(){
     		width = 170;
     		height = Utils.getHexHeight(width/2);
     	}
-    	var el = this.addChild();
+    	var el = this.eventNode.addChild();
 		el.setPosition(0, -35)
-    		.setSizeMode(1, 1)
-    		.setAbsoluteSize(width,height)
+    		//.setSizeMode(1, 1)
+    		.setProportionalSize(1.2, 0.48)
+            //.setAbsoluteSize(width,height)
     		.setMountPoint(0.5,0)
     		.setAlign(0.5,0);
 
@@ -66,18 +70,12 @@ Meteor.startup(function(){
     		content: this.data.date,
     		classes: ['release','magazine-selection']
     	});
-        el.addUIEvent('click');
-        var comp = {
-            onReceive: function(event, payload){
-                if(event == "click"){
-                    payload.stopPropagation();
-                    this.emit("goInsideMagazine");
-                }
-            }.bind(this)
-        };
-        el.addComponent(comp);
-        dateNode.addComponent(comp);
+        var dataGestures = new GestureHandler(el);
+        dataGestures.on('tap', _callEvents.bind(this));
+        var hexGestures = new GestureHandler(dateNode);
+        hexGestures.on('tap', _callEvents.bind(this))
         this.hexEl = el;
+        return el;
     	/*var data = new DOMElement(el,{
     		tagName:'h2',
     		content: this.data.number
@@ -85,9 +83,11 @@ Meteor.startup(function(){
     	//hexEl.setContent("<h2>"+ this.data.number + "</h2>");
     	//hexEl.setContent("<img class='article' src='karibik.gif'><h2>"+ this.data.number + "</h2></img>");
     }
-
+    function _callEvents(){
+        this.emit("goInsideMagazine");
+    }
     function _createName(){
-    	var nameNode = this.addChild()
+    	var nameNode = this.eventNode.addChild()
 	    							  .setProportionalSize(0.73,0.25)
 	    							  .setAlign(0.5, 0.37)
 	    							  .setMountPoint(0.5,0);

@@ -67,8 +67,8 @@ Meteor.startup(function(){
 			this.requestUpdate(comp);
 			prefix.set([0.7, Utils.scaleMenuOut], { duration: Utils.selectionMenuChangeTime}, function(){
 			}.bind(this));*/
-			this.emit("showMenu",{id: this.currentMagazine});
 			this.hide();
+			this.emit("showMenu",{id: this.currentMagazine});
 			// this.setScale(1.5,1.5)
 			// this.hide();
 		}
@@ -188,9 +188,16 @@ Meteor.startup(function(){
 	    this.headerEl = new DOMElement(this.header, {
 	    	classes: ['arrowUp', 'white']
 	    });
-        this.header.addUIEvent('click');
-		Utils.addClickComponent(this.header, "selectHeader");
+	    var gestures = new GestureHandler(this.header);
+	    gestures.on("tap",function(){		
+	    	this.header.emit('selectHeader');
+	    }.bind(this));
+/*        this.header.addUIEvent('click');
+		Utils.addClickComponent(this.header, "selectHeader");*/
 
+	}
+	function callEvents(){
+		this.emit("selectHeader");
 	}
 
 	function makeFooter(){
@@ -202,8 +209,12 @@ Meteor.startup(function(){
 	    this.footerEl = new DOMElement(this.footer, {
 	    	classes: ['arrowDown', 'white']
 	    });
-        this.footer.addUIEvent('click');
-		Utils.addClickComponent(this.footer, "selectFooter");
+	    var gestures = new GestureHandler(this.footer);
+	    gestures.on("tap",function(){		
+	    	this.footer.emit('selectFooter');
+	    }.bind(this));
+/*        this.footer.addUIEvent('click');
+		Utils.addClickComponent(this.footer, "selectFooter");*/
  /*   	var gestures = new GestureHandler(footer);
 		function callback() { console.log('Gesture'); }
 		gestures.on('tap', callback);*/
