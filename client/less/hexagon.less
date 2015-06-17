@@ -9,7 +9,7 @@
 @height: 2 * (@width /( 2 * tan(pi()/6)));
 
 .hexagon.navHex{
-    @width:90px;
+    @width:15.9vh;
     @height: 2 * (@width /( 2 * tan(pi()/6)));
     @spacing:0px;
     @spacingHeight:0px;
@@ -38,10 +38,19 @@
         left: 0;
     }
     &:before{
-        transform: rotate(-60deg);
+
+      -webkit-transform: rotate(-60deg);
+      -moz-transform:    rotate(-60deg);
+      -ms-transform:     rotate(-60deg);
+      -o-transform:      rotate(-60deg);
+      transform:         rotate(-60deg);
     }
     &:after{
-        transform: rotate(60deg);
+        -webkit-transform: rotate(60deg);
+        -moz-transform:    rotate(60deg);
+        -ms-transform:     rotate(60deg);
+        -o-transform:      rotate(60deg);
+        transform:         rotate(60deg);
     }
     &:nth-child(even){
         /* top approx. 50% of .hexagon height + spacing */
@@ -72,7 +81,11 @@
   position: absolute;
   top: 50%;
   left: 50%;
-  transform: translate(-50%, -50%);
+  -webkit-transform: translate(-50%, -50%);
+  -moz-transform:    translate(-50%, -50%);
+  -ms-transform:     translate(-50%, -50%);
+  -o-transform:      translate(-50%, -50%);
+  transform:         translate(-50%, -50%);
   width: 140%;
   font-size: 1.4rem;
   line-height: 1.2;
@@ -87,9 +100,12 @@
   text-align: center;
 }
 .articleHex{
-  -ms-transform: scale(0.5,0.5); /* IE 9 */
-  -webkit-transform: scale(0.5,0.5); /* Safari */
-  transform: scale(0.5,0.5);
+
+  -webkit-transform: scale(0.5,0.5);
+  -moz-transform:    scale(0.5,0.5);
+  -ms-transform:     scale(0.5,0.5);
+  -o-transform:      scale(0.5,0.5);
+  transform:         scale(0.5,0.5);
 }
 .bg-icon{
     font-size: 5rem;

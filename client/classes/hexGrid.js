@@ -76,12 +76,13 @@ Meteor.startup(function(){
 									.setAlign(cord.x, cord.y);
 			//el = new DOMElement(hex,{tagName: 'img'}).setAttribute('src', data.menuUrl);
 			el = new DOMElement(hex);
+			var somePlace = i === -1 ? '<i class="fa fa-bicycle"></i>' : ""; 
 			//el.setContent('<div class="hexrow"><div style="background: url(Mandarins.jpg); no-repeat center">' +
 			//	        '<span><h3>' + data.shortName.toUpperCase() + '</h3></span><div></div><div></div></div></div>');
 			el.setContent(
 				'<div class="hexrow">'+
 					'<div style="background-color:' + this.data.colorScheme + /*url(img/Mandarins.jpg);*/'">' +
-						'<span>' + data.shortName.toUpperCase() + '</span>' +
+						'<span>' + data.shortName.toUpperCase() + somePlace + '</span>' +
 						'<div></div><div></div>' +
 					'</div>' +
 				'</div>'

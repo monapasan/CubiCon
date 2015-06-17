@@ -72,7 +72,11 @@
     overflow: hidden;
     background-image: inherit;
     background-color: inherit;
-    transform:rotate(60deg);
+    -webkit-transform: rotate(60deg);
+    -moz-transform:    rotate(60deg);
+    -ms-transform:     rotate(60deg);
+    -o-transform:      rotate(60deg);
+    transform:         rotate(60deg);
 }
 
 .hexrow > div > div:first-of-type:before {
@@ -89,7 +93,14 @@
     left: 0;
     z-index: 1;
     transform:rotate(-60deg) translate(-(@hex-width + (2 * @margin-sizing)), 0);
+    -ms-transform-origin: 0 0; /* IE 9 */
+    -webkit-transform-origin: 0 0; /* Chrome, Safari, Opera */
     transform-origin: 0 0;
+    -webkit-transform: rotate(-60deg) translate(-(@hex-width + (2 * @margin-sizing)), 0);
+    -moz-transform:    rotate(-60deg) translate(-(@hex-width + (2 * @margin-sizing)), 0);
+    -ms-transform:     rotate(-60deg) translate(-(@hex-width + (2 * @margin-sizing)), 0);
+    -o-transform:      rotate(-60deg) translate(-(@hex-width + (2 * @margin-sizing)), 0);
+    transform:         rotate(-60deg) translate(-(@hex-width + (2 * @margin-sizing)), 0);
 }
 
 .hexrow > div > div:last-of-type {
@@ -105,7 +116,11 @@
     overflow: hidden;
     background-image: inherit;
     background-color: inherit;
-    transform:rotate(-60deg);
+    -webkit-transform: rotate(-60deg);
+    -moz-transform:    rotate(-60deg);
+    -ms-transform:     rotate(-60deg);
+    -o-transform:      rotate(-60deg);
+    transform:         rotate(-60deg);
 }
 
 .hexrow > div > div:last-of-type:before {
@@ -124,8 +139,15 @@
     z-index: 1;
 
     // translate properties are initial width (100px) and half height (173.2 / 2 = 86.6)
-    transform:rotate(60deg) translate(@hex-width, (@hex-height / 2));
+    -webkit-transform: rotate(60deg) translate(@hex-width, (@hex-height / 2));
+    -moz-transform:    rotate(60deg) translate(@hex-width, (@hex-height / 2));
+    -ms-transform:     rotate(60deg) translate(@hex-width, (@hex-height / 2));
+    -o-transform:      rotate(60deg) translate(@hex-width, (@hex-height / 2));
+    transform:         rotate(60deg) translate(@hex-width, (@hex-height / 2));
+    -ms-transform-origin: 100% 0; /* IE 9 */
+    -webkit-transform-origin: 100% 0; /* Chrome, Safari, Opera */
     transform-origin: 100% 0;
+
 }
 .hexrow > div > span {
     display: inline-block;
