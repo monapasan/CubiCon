@@ -13,9 +13,9 @@ Meteor.startup(function(){
         // object to store the buttons
         this.buttons = {};
         this.eventNode = this.addChild();
-        _createHexagon.call(this);
-        _createName.call(this);
-        _createDescription.call(this);
+        this.hexagon = _createHexagon.call(this);
+        this.titleNode = _createName.call(this);
+        this.description = _createDescription.call(this);
         //_bindEvents.call(this);
         // for every section create a NavButton
         // and set its size and align
@@ -36,7 +36,7 @@ Meteor.startup(function(){
         }
     };*/
     function _createHexagon(){
-    	var dataEl;
+    	var dataEl, el, hexEl, hexNode, dateNode;
     	var width,height,type = this.data.imgUrl.split(".")[1];
     	if(type =="gif"){
     		width = 400;
@@ -45,22 +45,23 @@ Meteor.startup(function(){
     		width = 170;
     		height = Utils.getHexHeight(width/2);
     	}
-    	var el = this.eventNode.addChild();
-		el.setPosition(0, -35)
+    	el = this.eventNode.addChild();
+        hexNode = el.addChild();
+		hexNode.setPosition(0, -35)
     		//.setSizeMode(1, 1)
     		.setProportionalSize(1.2, 0.48)
             //.setAbsoluteSize(width,height)
     		.setMountPoint(0.5,0)
     		.setAlign(0.5,0);
 
-    	var hexEl = new DOMElement(el,{
+    	hexEl = new DOMElement(hexNode,{
     		tagName: "img",
     		attributes:{
     			src: this.data.imgUrl
     		},
     		classes:['articleHex']
     	});
-    	var dateNode = this.addChild().setSizeMode(1, 2)
+    	dateNode = el.addChild().setSizeMode(1, 2)
     								  .setAbsoluteSize(101, null)
     								  .setAlign(0.5, 0.1)
     								  .setMountPoint(0.5, 0.5)
@@ -73,7 +74,7 @@ Meteor.startup(function(){
         var dataGestures = new GestureHandler(el);
         dataGestures.on('tap', _callEvents.bind(this));
         var hexGestures = new GestureHandler(dateNode);
-        hexGestures.on('tap', _callEvents.bind(this))
+        hexGestures.on('tap', _callEvents.bind(this));
         this.hexEl = el;
         return el;
     	/*var data = new DOMElement(el,{
@@ -96,6 +97,7 @@ Meteor.startup(function(){
 			classes:['article-name', 'magazine-selection'],
 			content: this.data.name
 		});
+        return nameNode;
     }
     function _createDescription(){
     	var descriptionNode = this.addChild().setDifferentialSize(-100,0)
@@ -107,6 +109,7 @@ Meteor.startup(function(){
 			classes: ['description','magazine-selection'],
 			content: this.data.description
 		});
+        return descriptionNode;
     }
     ArticleSelectionBody.prototype = Object.create(Node.prototype);
 

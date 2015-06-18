@@ -24,7 +24,10 @@ Meteor.startup(function(){
     };
     function createHexagon(){
         var hex = this.addChild().setProportionalSize(1, 0.3).addChild();
-        hex.setSizeMode(1,1).setAbsoluteSize(160,138).setAlign(0.5, 0.25).setMountPoint(0.40, 0);
+        hex.setSizeMode(1,1)
+            .setAbsoluteSize(160,138)
+            .setAlign(0.5, 0.25)
+            .setMountPoint(0.5, 0)
         var hexEl = new DOMElement(hex);
         hexEl.setContent(
             '<div class="hexagon navHex" style="background-color:' + this.data.colorScheme+'">' +
