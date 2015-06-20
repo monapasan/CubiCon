@@ -22,17 +22,19 @@ Meteor.startup(function(){
     ArticleDescriptionView.DEFAULT_PROPERTIES = {
         currentArticle:0
     };
+    //0.865
     function createHexagon(){
         var hex = this.addChild().setProportionalSize(1, 0.3).addChild();
-        hex.setSizeMode(1,1)
-            .setAbsoluteSize(160,138)
+        var width = 0.5;
+        var height = Utils.getHexHeight(width);
+        hex.setSizeMode(0,1)
+            .setAbsoluteSize(null, height)
+            .setProportionalSize(width, null)
             .setAlign(0.5, 0.25)
-            .setMountPoint(0.5, 0)
+            .setMountPoint(0.5, 0);
         var hexEl = new DOMElement(hex);
-        hexEl.setContent(
-            '<div class="hexagon navHex" style="background-color:' + this.data.colorScheme+'">' +
-                '<div class="hexagontent"></div>' +
-            '</div>');
+        
+        hexEl.setContent('<svg version="1.1" viewBox="0 20 300 260" preserveAspectRatio="xMinYMin meet" class="svg-content"><polygon  points="300,150 225,280 75,280 0,150 75,20 225,20" fill="'+ this.data.colorScheme + '"></polygon></svg>');
         this.gestures = new GestureHandler(hex);
         this.gestures.on('tap', emitGoInsideArticle.bind(this));
         return hex;
@@ -60,9 +62,6 @@ Meteor.startup(function(){
                 'background-color':'#222229'
                 }
             });
-        if(window.screen.height < 490){
-            this.responsiveNode.setPosition(0, 30);
-        }
         return title;
     }
     function createDescription(){

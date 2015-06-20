@@ -2,72 +2,98 @@ Meteor.startup(function(){
     var Node = Famous.Node;
     var DOMElement = Famous.DOMElement;
     var GestureHandler = Famous.GestureHandler;
-    // the number of sections in the app
-
-    // the footer will hold the nav buttons
+    var PhysicsEngine = Famous.PhysicsEngine;
+    var FamousEngine = Famous.FamousEngine;
+    var math = Famous.math;
+    var physics = Famous.Physics;
+    var Box = physics.Box;
+    var Spring = physics.Spring;
+    var RotationalSpring = physics.RotationalSpring;
+    var RotationalDrag = physics.RotationalDrag;
+    var Quaternion = math.Quaternion;
+    var Vec3 = math.Vec3;
     function ArticleSelectionBody (data, i) {
-        // subclass Node
         Node.call(this);
         this.data = data;
         this.currentArticle = i;
-        // object to store the buttons
-        this.buttons = {};
+        this.addComponent(getResizeComponent.call(this));
+        this.simulation = new PhysicsEngine();
         this.eventNode = this.addChild();
         this.hexagon = _createHexagon.call(this);
         this.titleNode = _createName.call(this);
         this.description = _createDescription.call(this);
-        //_bindEvents.call(this);
-        // for every section create a NavButton
-        // and set its size and align
-/*        data.sections.forEach(function (section, i) {
-            this.buttons[section.id] = this.addChild(new App.NavButton(section.id))
-                                           .setProportionalSize(1 / this.numSections)
-                                           .setAlign(i / this.numSections);
-        }.bind(this));*/
+        this.physics = createPhysics.call(this);
+        //FamousEngine.requestUpdate(this);
     }
-/*    ArticleSelectionBody.prototype.ahangeArticle = function(to){
-    	this.
-		.setAbsoluteSize(300, null)
-		.setProportionalSize(null, 0.37)
-    }*/
-/*    ArticleSelectionBody.prototype.onReceive = function onReceive (event, payload) {
-        if(event == 'click'){
-            this.emit("goInsideMagazine",{number: this.currentArticle});
-        }
-    };*/
+    ArticleSelectionBody.prototype = Object.create(Node.prototype);
+
+    function createPhysics(){
+        var box = new Box({
+            mass: 100,
+            size: [100,100,0]
+        });
+        var anchor = this.currentArticle === 0 ? new Vec3(0, 0, 0) : new Vec3(0, 1, 0);
+        var spring = new Spring(null, box, {
+            period: 0.6,
+            dampingRatio: 0.5,
+            anchor: anchor
+        });
+        //this.simulation(box, spring);
+        var physics = {
+            box: box,
+            anchor: anchor,
+            spring: spring
+        };
+        return physics;
+    }
+    ArticleSelectionBody.prototype.defineHeight = function defineHeight(size){
+        this.pageHeight = size[1];
+    };
+
+    function getResizeComponent(){
+        var resizeComponent = {
+            onSizeChange: function(size) {
+                this.defineHeight(size);
+            }.bind(this)
+        };
+        return resizeComponent;
+    }
     function _createHexagon(){
     	var dataEl, el, hexEl, hexNode, dateNode;
-    	var width,height,type = this.data.imgUrl.split(".")[1];
-    	if(type =="gif"){
-    		width = 400;
-    		height = 225;
-    	}else{
-    		width = 170;
-    		height = Utils.getHexHeight(width/2);
-    	}
+    	var width,height;
+
+        width = 0.6;
+        height = Utils.getHexHeight(width);
+
     	el = this.eventNode.addChild();
+
         hexNode = el.addChild();
 		hexNode.setPosition(0, -35)
-    		//.setSizeMode(1, 1)
-    		.setProportionalSize(1.2, 0.48)
-            //.setAbsoluteSize(width,height)
+    		.setSizeMode(0, 1)
+    		.setProportionalSize(width, null)
+            .setAbsoluteSize(null ,height)
     		.setMountPoint(0.5,0)
     		.setAlign(0.5,0);
 
     	hexEl = new DOMElement(hexNode,{
-    		tagName: "img",
-    		attributes:{
-    			src: this.data.imgUrl
-    		},
     		classes:['articleHex']
     	});
-    	dateNode = el.addChild().setSizeMode(1, 2)
+        hexEl.setContent(
+            '<svg version="1.1" viewBox="0 20 300 260" preserveAspectRatio="xMinYMin meet" class="svg-content">'+
+                '<defs>' +
+                    '<pattern id="image-bg" x="0" y="0" height="100%" width="100%" patternUnits="objectBoundingBox">' +
+                      '<image preserveAspectRatio="xMidYMid slice" width="300" height="260" xlink:href="http://dummyimage.com/300x300/000/fff.gif&text=+" ></image>' +
+                    '</pattern>' +
+                '</defs>' + 
+                '<polygon class="svgHexagon" points="300,150 225,280 75,280 0,150 75,20 225,20" fill="url(#image-bg)"></polygon>' + 
+            '</svg>');
+    	dateNode = hexNode.addChild().setSizeMode(1, 0)
+                                      .setProportionalSize(null, 0.2)
     								  .setAbsoluteSize(101, null)
-    								  .setAlign(0.5, 0.1)
+    								  .setAlign(0.5, 0.5)
     								  .setMountPoint(0.5, 0.5)
-    								  .setPosition(0,-13);
+    								  .setPosition(0, 0);
     	dataEl = new DOMElement(dateNode, {
-    		tagName:'h2',
     		content: this.data.date,
     		classes: ['release','magazine-selection']
     	});
@@ -77,12 +103,7 @@ Meteor.startup(function(){
         hexGestures.on('tap', _callEvents.bind(this));
         this.hexEl = el;
         return el;
-    	/*var data = new DOMElement(el,{
-    		tagName:'h2',
-    		content: this.data.number
-    	});*/
-    	//hexEl.setContent("<h2>"+ this.data.number + "</h2>");
-    	//hexEl.setContent("<img class='article' src='karibik.gif'><h2>"+ this.data.number + "</h2></img>");
+
     }
     function _callEvents(){
         this.emit("goInsideMagazine");
@@ -111,7 +132,11 @@ Meteor.startup(function(){
 		});
         return descriptionNode;
     }
-    ArticleSelectionBody.prototype = Object.create(Node.prototype);
+
+    // ArticleSelectionBody.prototype.onUpdate = function onUpdate(time){
+    //     this.simulation.update(time);
+    //     FamousEngine.requestUpdateOnNextTick(this);
+    // };
 
     App.ArticleSelectionBody = ArticleSelectionBody;
 });

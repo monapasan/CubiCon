@@ -1,6 +1,7 @@
 Meteor.startup(function(){
 	Utils.getHexHeight = function(width){
-		return 2 * (width /( 2 * Math.tan(Math.PI/6)));
+		var height = (screen.width * width) * 0.865;
+		return height;
 	};
 	Utils.fadingOut = function(node, trans, i){
 		var id = node.addComponent({

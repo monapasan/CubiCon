@@ -40,6 +40,20 @@
 		background: url("hexMenuBg.jpg") no-repeat;
 	}
 }
+
+.svgHexagon{
+	background-size: contain;
+}
+.text{
+	text-align: center;
+	overflow-y:hidden;
+	color:#F4E1E1;
+	&.hextext{
+		font-family: BebasNeue, monaco, monospace;
+		line-height: 4.5vh;
+		font-size: 4.5vh;
+	}
+} 
 .magazine-selection{
 	text-align: center;
 	overflow-y:hidden;
@@ -87,11 +101,12 @@
 }
 @articleHexWidth: 70vh;
 .articleHex{
-	width: @articleHexWidth;
-	height:0.5856 * @articleHexWidth;
-	-ms-transform: scale(0.5,0.5); /* IE 9 */
-	-webkit-transform: scale(0.5,0.5); /* Safari */
-	transform: scale(0.5,0.5);
+	// width: @articleHexWidth;
+	// height:0.5856 * @articleHexWidth;
+	// -ms-transform: scale(0.5,0.5); /* IE 9 */
+	// -webkit-transform: scale(0.5,0.5); /* Safari */
+	// transform: scale(0.5,0.5);
+	background-size: contain;
 }
 .hexEl{
 	display: inline-flex;

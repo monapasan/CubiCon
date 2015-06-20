@@ -9,6 +9,8 @@ Meteor.startup(function(){
 	var Swapper = App.Swapper;
 	var GestureHandler = Famous.GestureHandler;
 	var ArticleSelectionBody = App.ArticleSelectionBody;
+    var PhysicsEngine = Famous.PhysicsEngine;
+    var FamousEngine = Famous.FamousEngine;
 	var Transitionable = Famous.Transitionable;
 	function SelectionView(data) {
 		Node.call(this);
@@ -22,11 +24,14 @@ Meteor.startup(function(){
 		_makeFooter.call(this);
 		_bindEvents.call(this);
 		this.magazines = _makeMagazines.call(this);
-		_bindDragEvents.call(this);
+		//_bindDragEvents.call(this);
+		//this.backgroundColor.addComponent(getResizeComponent.call(this));
 		this.threshold = 4000;
 		this.force = new Famous.Vec3();
 		this.toogle = true;
+		makePhysicAnimation.call(this);
 		//this.animationComponent = _getComponent.call(this);
+		FamousEngine.requestUpdate(this);
 	}
 
 	SelectionView.prototype = Object.create(Node.prototype);
@@ -35,68 +40,112 @@ Meteor.startup(function(){
 	var DISPLACEMENT_PEEK = 50;
 	var DISPLACEMENT_THRESHOLD = 30;
 	var VELOCITY_THRESHOLD = 300;
+    SelectionView.prototype.defineHeight = function defineHeight(size){
+        this.pageHeight = size[1];
+    };
 
-	function _getComponent(position){
-		return [{
-			event: 'drag',
-			callback: _getDragCallback.bind(this, position)
-		}];
-	}
+    function getResizeComponent(){
+        var resizeComponent = {
+            onSizeChange: function(size) {
+                this.defineHeight(size);
+            }.bind(this)
+        };
+        return resizeComponent;
+    }
+	SelectionView.prototype.onUpdate = function(time) {
+	    this.simulation.update(time);
 
-	function _getDragCallback(position, e) {
-		if(!this.toogle){
-			return;
-		}
-        // this.force.set(e.centerDelta.x, 0, 0); // Add a force equal to change in X direction
-        // this.force.scale(20); // Scale the force up
-        // descriptionNode.box.applyForce(this.force); // Apply the force to the `Box` body
-        var currentPosition = position.getY();
-        var delta = e.centerDelta.y;
-        if(currentPosition + e.centerDelta.y < DISPLACEMENT_LIMIT)
-        	position.set(0, currentPosition + delta);
-        else
-        	position.set(0, DISPLACEMENT_LIMIT);
-        
-        if (currentPosition + delta < -DISPLACEMENT_PEEK)
-        	position.set(0, -DISPLACEMENT_PEEK);
-        if(e.status ==='end'){
-			this.toogle = false;
-        	var velocity = e.centerVelocity.y;
-        	var direction;
-        	if(currentPosition > DISPLACEMENT_THRESHOLD || velocity > VELOCITY_THRESHOLD){
-        		direction = -1;
-        		this.emit('changeMagazine', {direction: direction});
-    		}
-        	else if (currentPosition < -DISPLACEMENT_THRESHOLD || velocity < -VELOCITY_THRESHOLD){
-        		direction = 1;
-        		this.emit('changeMagazine', {direction: direction});
-    		}
-    		var shouldGoBack = getNextIndex.call(this,direction);
-        	if(this.currentMagazine === shouldGoBack || !shouldGoBack){
-        		position.set(0, 0, 0, { duration: 500, curve: 'easeOutBounce'}, getToogleCallback.bind(this));
-    		}
-        }
-	}
+	    var page;
+	    var physicsTransform;
+	    var p;
+	    var r;
+	    for (var i = 0, len = this.magazines.length; i < len; i++) {
+	        page = this.magazines[i].body;
 
-	function getToogleCallback(){
-		this.toogle = true;
-	}
+	        // Get the transform from the `Box` body
+	        physicsTransform = this.simulation.getTransform(page.physics.box);
+	        p = physicsTransform.position;
+	        //r = physicsTransform.rotation;
 
-	function _bindDragEvents(){
+	        // Set the `imageNode`'s x-position to the `Box` body's x-position
+	        page.setPosition(0, p[0] * 480, 0);
 
-		var trans = new Transitionable();
-		this.magazines.forEach(function(magazine, i){
-			var descriptionNode = magazine.body.description;
-			var titleNode = magazine.body.titleNode;
-			var hexNode = magazine.body.hexagon;
+	        // Set the `imageNode`'s rotation to match the `Box` body's rotation
+	        //page.setRotation(r[0], r[1], r[2], r[3]);
+	    }
 
-        	var position = new Famous.Position(magazine.body);
-	        new GestureHandler(descriptionNode, _getComponent.call(this, position));
-	        new GestureHandler(titleNode, _getComponent.call(this, position));
-	        new GestureHandler(hexNode, _getComponent.call(this, position));
+	    FamousEngine.requestUpdateOnNextTick(this);
+	};
 
+	function makePhysicAnimation(){
+		this.simulation = new PhysicsEngine();
+		this.magazines.forEach(function(magazine){
+			var physics = magazine.body.physics;
+			this.simulation.add(physics.box, physics.spring);
 		}.bind(this));
 	}
+	// function _getComponent(position){
+	// 	return [{
+	// 		event: 'drag',
+	// 		callback: _getDragCallback.bind(this, position)
+	// 	}];
+	// }
+
+	// function _getDragCallback(position, e) {
+	// 	if(!this.toogle){
+	// 		return;
+	// 	}
+ //        // this.force.set(e.centerDelta.x, 0, 0); // Add a force equal to change in X direction
+ //        // this.force.scale(20); // Scale the force up
+ //        // descriptionNode.box.applyForce(this.force); // Apply the force to the `Box` body
+ //        var currentPosition = position.getY();
+ //        var delta = e.centerDelta.y;
+ //        if(currentPosition + e.centerDelta.y < DISPLACEMENT_LIMIT)
+ //        	position.set(0, currentPosition + delta);
+ //        else
+ //        	position.set(0, DISPLACEMENT_LIMIT);
+        
+ //        if (currentPosition + delta < -DISPLACEMENT_PEEK)
+ //        	position.set(0, -DISPLACEMENT_PEEK);
+ //        if(e.status ==='end'){
+	// 		this.toogle = false;
+ //        	var velocity = e.centerVelocity.y;
+ //        	var direction;
+ //        	if(currentPosition > DISPLACEMENT_THRESHOLD || velocity > VELOCITY_THRESHOLD){
+ //        		direction = -1;
+ //        		this.emit('changeMagazine', {direction: direction});
+ //    		}
+ //        	else if (currentPosition < -DISPLACEMENT_THRESHOLD || velocity < -VELOCITY_THRESHOLD){
+ //        		direction = 1;
+ //        		this.emit('changeMagazine', {direction: direction});
+ //    		}
+ //    		var shouldGoBack = getNextIndex.call(this,direction);
+ //        	if(this.currentMagazine === shouldGoBack || !shouldGoBack){
+ //        		position.set(0, 0, 0, { duration: 500, curve: 'easeOutBounce'}, getToogleCallback.bind(this));
+ //    		}
+ //        }
+	// }
+
+	// function getToogleCallback(){
+	// 	this.toogle = true;
+	// }
+
+	// function _bindDragEvents(){
+
+	// 	var trans = new Transitionable();
+	// 	this.magazines.forEach(function(magazine, i){
+	// 		var descriptionNode = magazine.body.description;
+	// 		var titleNode = magazine.body.titleNode;
+	// 		var hexNode = magazine.body.hexagon;
+
+ //        	var position = new Famous.Position(magazine.body);
+	//         new GestureHandler(descriptionNode, _getComponent.call(this, position));
+	//         new GestureHandler(titleNode, _getComponent.call(this, position));
+	//         new GestureHandler(hexNode, _getComponent.call(this, position));
+
+	// 	}.bind(this));
+	// }
+
 	SelectionView.prototype.onReceive = function onReceive (event, payload) {
 		var prefix = new Transitionable([1,1]);
 		if(event === "goInsideMagazine"){
@@ -219,23 +268,38 @@ Meteor.startup(function(){
 			this.setPosition(0,0);
 		}
 		if(from === null){
-			for(var i = 0; i < this.articleAmount; i++){
-				if(i == to){
-					this.magazines[i].align.set(0, 0, 0, curve);
-				}
-				else{
-					this.magazines[i].align.set(0, 1, 0, curve);
-				}
-			}
+	        this.magazines[to].body.physics.anchor.set(0, 0, 0);
 		}
-		else if(from < to){
-			this.magazines[from].align.set(0, -1, 0, curve, cb.bind(this.magazines[from].body));
-			this.magazines[to].align.set(0, 0, 0, curve, getToogleCallback.bind(this));
-		}
-		else {
-			this.magazines[from].align.set(0, 1, 0, curve, cb.bind(this.magazines[from].body));
-			this.magazines[to].align.set(0, 0, 0, curve, getToogleCallback.bind(this));
-		}
+	    else if (from < to) {
+	        this.magazines[from].body.physics.anchor.set(0, -1, 0);
+	        // this.pages[from].quaternion.fromEuler(0, Math.PI/2, 0);
+	        this.magazines[to].body.physics.anchor.set(0, 0, 0);
+	        // this.pages[to].quaternion.set(1, 0, 0, 0);
+	    } else if(from > to){
+	        this.magazines[from].body.physics.anchor.set(0, 1, 0);
+	        // this.pages[from].quaternion.fromEuler(0, -Math.PI/2, 0);
+	        this.magazines[to].body.physics.anchor.set(0, 0, 0);
+	        // this.pages[to].quaternion.set(1, 0, 0, 0);
+	    }
+
+		// if(from === null){
+		// 	for(var i = 0; i < this.articleAmount; i++){
+		// 		if(i == to){
+		// 			this.magazines[i].align.set(0, 0, 0, curve);
+		// 		}
+		// 		else{
+		// 			this.magazines[i].align.set(0, 1, 0, curve);
+		// 		}
+		// 	}
+		// }
+		// else if(from < to){
+		// 	this.magazines[from].align.set(0, -1, 0, curve, cb.bind(this.magazines[from].body));
+		// 	this.magazines[to].align.set(0, 0, 0, curve, getToogleCallback.bind(this));
+		// }
+		// else {
+		// 	this.magazines[from].align.set(0, 1, 0, curve, cb.bind(this.magazines[from].body));
+		// 	this.magazines[to].align.set(0, 0, 0, curve, getToogleCallback.bind(this));
+		// }
 		// fading out the Arrows if the current article
 		// is last or first one
 	    if(to == this.articleAmount - 1){
