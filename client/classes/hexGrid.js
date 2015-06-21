@@ -2,8 +2,8 @@ Meteor.startup(function(){
 	var Node = Famous.Node;
 	var Align = Famous.Align;
 	var DOMElement = Famous.DOMElement;
-
-
+	var Opacity =  Famous.Opacity;
+	var Transitionable = Famous.Transitionable;
 
 /*    var AMOUNT_ROW = 3;
     var AMOUNT_COLUMN = 3;
@@ -24,31 +24,76 @@ Meteor.startup(function(){
 		this.hexWidth = calculateHexWidth.call(this);
 		//this.hexHeight = (this.hexWidth / (2 * Math.tan(Math.PI /6))) - this.options.margin_y;
         this.hexHeight = calculateHexHeight.call(this);
+        //this.options.indent_y = calculateIndendtY.call(this);
         _generateCoords.call(this);
 		//console.log(this.hexWidth , this.hexHeight);
 		_makeHexagons.call(this);
 	}
     HexGrid.prototype = Object.create(Node.prototype);
 	HexGrid.prototype.onReceive = function onReceive(event, payload){
+		// if(event === "insideArticle"){
+		// 	showElements.call(this);
+		// }
 	};
+	function createComponent(node,transitionable, i){
+        var id  = node.addComponent({
+            onUpdate: function(){
+                var newOpacity = transitionable.get()[i];
+                node.setOpacity(newOpacity);
+                if (transitionable.isActive()) node.requestUpdate(id);
+            }.bind(this)
+        });
+        node.requestUpdate(id);
+	}
+	HexGrid.prototype.showElements = function showElements(){
+		var opacityTrans = new Transitionable([0,0,0,0]);
+		this.hexs.sort(function(a, b){
+			if(a.position === 5){
+				return false;
+			}
+			if(b.position === 5){
+				return true;
+			}
+			return b.position%3 - a.position%3;
+		});
+		this.hexs.forEach(function(hex, i){
+			//createComponent(hex.opacityHex);
+			setTimeout(function(){
+				hex.opacityHex.set(1,{duration: 800});
+				hex.opacityText.set(1,{duration: 800});
+			}, i * 300);
+		}.bind(this));
+	};
+	HexGrid.prototype.hideElements = function hideElements(){
+		this.hexs.forEach(function(hex){
+			hex.opacityText.set(0,{duration:1});
+			hex.opacityHex.set(0,{duration:1});
+		});
+	};
+
 	HexGrid.DEFAULT_PROPERTIES = {
-	    headerSize: 100,
-	    footerSize: 100,
+	    footerSize: 50,
 		margin_x: 0.01,
-		margin_y: 0.01,
+		margin_y: 5,
 		indent_x: 0,
-		indent_y: 0.05,
+		indent_y:  5,
 		columnAmount:3,
 		rowAmount:3,
 		hexagonsAmount:4,
 		currentArticle: 0,
 	};
+
+	function calculateIndendtY(){
+		var gridHeight = this.hexHeight * this.options.rowAmount + (this.options.rowAmount - 1) * this.options.margin_y;
+		return (screen.height - this.options.footerSize - gridHeight) / 2;
+	}
 	function calculateHexWidth() {
 		return 1/(this.options.columnAmount - (this.options.columnAmount - 1) * 0.25) - this.options.margin_x;
 	}
 	function calculateHexHeight() {
-		var prefix = screen.width / screen.height;
-		return  prefix * this.hexWidth;
+		//var prefix = screen.width / screen.height;
+		//return  prefix * this.hexWidth;
+		return Utils.getHexHeight(this.hexWidth);
 	}
     function _generateCoords(){
         this.cord = [];
@@ -59,13 +104,14 @@ Meteor.startup(function(){
 			result.x = this.options.indent_x + i * 0.75 * this.hexWidth + i * this.options.margin_x;
             for(var j = 0; j < this.options.rowAmount; j++){
                 if(i % 2)
-                    result.y = this.options.indent_y + j * this.hexHeight + this.options.margin_y + this.hexHeight / 2;
+                    result.y = this.options.indent_y + j * (this.hexHeight + this.options.margin_y) + this.hexHeight / 2;
                 else
-                    result.y = this.options.indent_y + j * this.hexHeight + this.options.margin_y;
+                    result.y = this.options.indent_y + j * (this.hexHeight + this.options.margin_y);
                 this.cord.push(_.clone(result));
                 //console.log(q++,result);
             }
         }
+        Utils.hexCordinates = _.clone(this.cord);
     }
 	function _makeHexagons(){
 		this.hexs = [];
@@ -74,10 +120,12 @@ Meteor.startup(function(){
 			data = this.data.sections[i];
 			cord = this.cord[data.position];
 			//console.log(cord);
-			hex = this.addChild().setSizeMode(0, 0)
-									.setProportionalSize(this.hexWidth, this.hexHeight)
+			hex = this.addChild().setSizeMode(0, 1)
+									.setProportionalSize(this.hexWidth, null)
+									.setAbsoluteSize(null, this.hexHeight)
 									//.setDifferentialSize(-46.66, -15)
-									.setAlign(cord.x, cord.y);
+									.setAlign(cord.x, 0)
+									.setPosition(0, cord.y);
 			//el = new DOMElement(hex,{tagName: 'img'}).setAttribute('src', data.menuUrl);
 			el = new DOMElement(hex);
 			//el.setContent('<div class="hexrow"><div style="background: url(Mandarins.jpg); no-repeat center">' +
@@ -93,11 +141,11 @@ Meteor.startup(function(){
 			el.setContent(
 				'<svg version="1.1" viewBox="0 20 300 260" preserveAspectRatio="xMinYMin meet" class="svg-content">'+
 					'<defs>' +
-					    '<pattern id="image-bg" x="0" y="0" height="100%" width="100%" patternUnits="objectBoundingBox">' +
+					    '<pattern id="image-bg' + this.currentArticle + i +'" x="0" y="0" height="100%" width="100%" patternUnits="objectBoundingBox">' +
 					      '<image preserveAspectRatio="xMidYMid slice" width="300" height="260" xlink:href="' + data.menuUrl + '" ></image>' +
 					    '</pattern>' +
 				  	'</defs>' + 
-					'<polygon class="svgHexagon" points="300,150 225,280 75,280 0,150 75,20 225,20" fill="url(#image-bg)"></polygon>' + 
+					'<polygon class="svgHexagon" points="300,150 225,280 75,280 0,150 75,20 225,20" fill="url(#image-bg' + this.currentArticle + i +')"></polygon>' + 
 				'</svg>');
 			var text  = hex.addChild().setProportionalSize(0.7,0.5).setAlign(0.5, 0.6).setMountPoint(0.5, 0.5);
 			new DOMElement(text,{
@@ -105,7 +153,16 @@ Meteor.startup(function(){
 				classes:["text","hextext"],
 				content: data.shortName.toUpperCase()
 			});
-			this.hexs.push(hex);
+			var opacityText = new Opacity(text);
+			var opacityHex = new Opacity(hex);
+			opacityHex.set(0,{duration: 10});
+			opacityText.set(0,{duration: 10});
+			this.hexs.push({
+				node:hex,
+				position: data.position,
+				opacityHex: opacityHex,
+				opacityText: opacityText
+			});
 		}
 	}
 	HexGrid.prototype.setOptions = function setOptions(options, data){

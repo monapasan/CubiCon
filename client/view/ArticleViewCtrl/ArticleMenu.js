@@ -55,6 +55,7 @@ Meteor.startup(function(){
 		grids.forEach(function(gridEl){
 			if(gridEl.grid.isShown()){
 				gridEl.grid.hide();
+				gridEl.grid.hideElements();
 			}
 		});
 		var descriptions = this.menus[this.currentMagazin].menu.getDescriptions();
@@ -98,6 +99,7 @@ Meteor.startup(function(){
 		}
 		if(event ===  "insideArticle"){
 			this.menus[this.currentMagazin].menu.grids[this.currentArticle].grid.show();
+			this.menus[this.currentMagazin].menu.grids[this.currentArticle].grid.showElements();
 		}
 	};
 

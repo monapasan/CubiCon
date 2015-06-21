@@ -3,6 +3,11 @@ Meteor.startup(function(){
 		var height = (screen.width * width) * 0.865;
 		return height;
 	};
+	Utils.getHexWidth = function(){
+		var columnAmount = 3;
+		var margin_x = 0.01;
+		return 1/(columnAmount - (columnAmount - 1) * 0.25) - margin_x;
+	};
 	Utils.fadingOut = function(node, trans, i){
 		var id = node.addComponent({
 			onUpdate: function(time) {

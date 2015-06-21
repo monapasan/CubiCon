@@ -41,6 +41,7 @@ Meteor.startup(function(){
 		this.grids.forEach(function(grid, i){
 			if(i === this.currentArticle) {
 				this.grids[i].align.set(0,0,0, {duration: 1});
+				this.grids[i].grid.showElements();
 			}
 			else{
 				this.grids[i].align.set(-1,0,0, {duration: 1});

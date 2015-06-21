@@ -26,4 +26,5 @@ Meteor.startup(function() {
     Famous.Quaternion = famous.math.Quaternion;
     Famous.GestureHandler = famous.components.GestureHandler;
     Famous.Transitionable = famous.transitions.Transitionable;
+    Famous.Opacity = famous.components.Opacity;
 });
