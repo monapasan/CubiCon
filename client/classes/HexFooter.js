@@ -48,10 +48,12 @@ Meteor.startup(function(){
             classes:['hexFooter'],
             content:content
         });
-        el.setP
+        //el.setP
         var gestures = new GestureHandler(el);
-        gestures.on('tap', function(){
+        gestures.on('tap', function(e){
+            console.log(1);
             this.emit("changeArticle");
+            //this.emit("applyForce", {e: e});
         }.bind(this));
         
         this.backgroundColor.setProperty("backgroundColor", this.data.articles[this.currentArticle].colorScheme);

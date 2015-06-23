@@ -18,6 +18,7 @@ Meteor.startup(function(){
         this.description = createDescription.call(this);
         this.lineOpacity = new Opacity(this.description);
         this.descriptionOpacity = new Opacity(this.description);
+        //this.bigTitle = createBigTitle.call(this);
 
 
 	}
@@ -30,6 +31,11 @@ Meteor.startup(function(){
     ArticleDescriptionView.DEFAULT_PROPERTIES = {
         currentArticle:0
     };
+    // maybe if i have a time
+    // function createBigTitle(){
+    //     var title = this.addChild();
+    //     var titleEl = new DOMElement() 
+    // }
     function createHexagon(){
         var alignEl = this.addChild().setProportionalSize(1, 0.3);
         this.hexAlign = new Align(alignEl);
@@ -49,6 +55,10 @@ Meteor.startup(function(){
         this.gestures.on('tap', makeAnimations.bind(this));
         return hex;
     }
+    // maybe if i have a time
+    // ArticleDescriptionView.prototype.showBigTitle = function showBigTitle(){
+
+    // };
     function createOpacityComponent(node){
         var id  = node.addComponent({
             onUpdate: function(){
@@ -60,12 +70,12 @@ Meteor.startup(function(){
         node.requestUpdate(id);
     }
     function emitGoInsideArticle(){
-        this.hexOpacity.set(0,{duration: 300}, function(){
+        this.hexOpacity.set(0.2,{duration: 300}, function(){
             this.emit("insideArticle",{node: this});
             setTimeout(function(){
                 this.hexagonPosition.set(0, 0, 0, {duration: 1});
                 this.hexOpacity.set(1,{duration:1});
-            }.bind(this), 200);
+            }.bind(this), 100);
         }.bind(this));
     }
     function makeAnimations(){

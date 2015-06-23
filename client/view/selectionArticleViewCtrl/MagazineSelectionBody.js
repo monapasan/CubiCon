@@ -15,49 +15,14 @@ Meteor.startup(function(){
     function ArticleSelectionBody (data, i) {
         Node.call(this);
         this.data = data;
-        this.currentArticle = i;
-        this.addComponent(getResizeComponent.call(this));
-        this.simulation = new PhysicsEngine();
-        this.eventNode = this.addChild();
+        this.currentMagazine = i;
         this.hexagon = _createHexagon.call(this);
         this.titleNode = _createName.call(this);
         this.description = _createDescription.call(this);
-        //this.physics = createPhysics.call(this);
-        //FamousEngine.requestUpdate(this);
     }
     ArticleSelectionBody.prototype = Object.create(Node.prototype);
 
-    function createPhysics(){
-        var box = new Box({
-            mass: 100,
-            size: [100,100,0]
-        });
-        var anchor = this.currentArticle === 0 ? new Vec3(0, 0, 0) : new Vec3(0, 1, 0);
-        var spring = new Spring(null, box, {
-            period: 0.6,
-            dampingRatio: 0.5,
-            anchor: anchor
-        });
-        //this.simulation(box, spring);
-        var physics = {
-            box: box,
-            anchor: anchor,
-            spring: spring
-        };
-        return physics;
-    }
-    ArticleSelectionBody.prototype.defineHeight = function defineHeight(size){
-        this.pageHeight = size[1];
-    };
 
-    function getResizeComponent(){
-        var resizeComponent = {
-            onSizeChange: function(size) {
-                this.defineHeight(size);
-            }.bind(this)
-        };
-        return resizeComponent;
-    }
     function _createHexagon(){
     	var dataEl, el, hexEl, hexNode, dateNode, toMakeClickable;
     	var width,height;
@@ -65,7 +30,7 @@ Meteor.startup(function(){
         width = 0.5;
         height = Utils.getHexHeight(width);
 
-    	el = this.eventNode.addChild();
+    	el = this.addChild();
 
         hexNode = el.addChild();
 		hexNode.setPosition(0, -35)
@@ -103,14 +68,8 @@ Meteor.startup(function(){
                       '<image preserveAspectRatio="xMidYMid slice" width="300" height="260" xlink:href="'+ this.data.imgUrl +'" ></image>' +
                     '</pattern>' +
                 '</defs>' + 
-                '<polygon id="' + "selectionHex" + this.currentArticle + '" class="svgHexagon" points="300,150 225,280 75,280 0,150 75,20 225,20" fill="url(#image-bg)"></polygon>' + 
+                '<polygon id="' + "selectionHex" + this.currentMagazine + '" class="svgHexagon" points="300,150 225,280 75,280 0,150 75,20 225,20" fill="#FFF3F3"></polygon>' + 
             '</svg>');
-
-        // hexEl.onShow = function(){
-        // }.bind(this);
-        // hexNode.onParentShow = function(){
-        //     console.log(1);
-        // };
     	dateNode = hexNode.addChild().setSizeMode(1, 0)
                                       .setProportionalSize(null, 0.2)
     								  .setAbsoluteSize(101, null)
@@ -130,17 +89,11 @@ Meteor.startup(function(){
 
     }
 
-    ArticleSelectionBody.prototype.onShow = function onShow (parent, parentId, index) {
-        // this.mount(parent, parentId + '/' + index);
-        toMakeClickable = document.getElementById("selectionHex" + this.currentArticle);
-        toMakeClickable.ontouchstart(_callEvents.bind(this));
-        // return this;
-    };
     function _callEvents(){
         this.emit("goInsideMagazine");
     }
     function _createName(){
-    	var nameNode = this.eventNode.addChild()
+    	var nameNode = this.addChild()
 	    							  .setProportionalSize(0.73,0.25)
 	    							  .setAlign(0.5, 0.37)
 	    							  .setMountPoint(0.5,0);
@@ -149,6 +102,7 @@ Meteor.startup(function(){
 			classes:['article-name', 'magazine-selection'],
 			content: this.data.name
 		});
+        new GestureHandler(nameNode);
         return nameNode;
     }
     function _createDescription(){
@@ -161,6 +115,7 @@ Meteor.startup(function(){
 			classes: ['description','magazine-selection'],
 			content: this.data.description
 		});
+        new GestureHandler(descriptionNode);
         return descriptionNode;
     }
 

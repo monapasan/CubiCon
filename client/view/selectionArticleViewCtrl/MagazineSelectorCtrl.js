@@ -4,6 +4,7 @@ Meteor.startup(function(){
 	var Node = Famous.Node;
 	var DOMElement = Famous.DOMElement;
 	var Align = Famous.Align;
+	var Opacity = Famous.Opacity;
 	var Header = App.Header;
 	var Footer = App.Footer;
 	var Swapper = App.Swapper;
@@ -40,6 +41,7 @@ Meteor.startup(function(){
 		this.updater.onUpdate = onUpdate.bind(this);
 		this.force = new Vec3();
 		FamousEngine.requestUpdate(this.updater);
+		this.opacity = new Opacity(this);
 	}
 
 	SelectionView.prototype = Object.create(Node.prototype);
@@ -75,9 +77,9 @@ Meteor.startup(function(){
 	        physicsTransform = this.simulation.getTransform(page.box);
 	        p = physicsTransform.position;
 	        //r = physicsTransform.rotation;
-
+	        yPos = Math.round(p[1] * this.pageHeight * 100) / 100;
 	        // Set the `imageNode`'s x-position to the `Box` body's x-position
-	        page.body.setPosition(0, p[1] * this.pageHeight, 0);
+	        page.body.setPosition(0, yPos, 0);
 
 	        // Set the `imageNode`'s rotation to match the `Box` body's rotation
 	        //page.setRotation(r[0], r[1], r[2], r[3]);
@@ -142,8 +144,7 @@ Meteor.startup(function(){
 			var hexNode = magazine.body.hexagon;
 
         	var position = new Famous.Position(magazine.body);
-        	new GestureHandler(descriptionNode);
-        	new GestureHandler(titleNode);
+
 	        // new GestureHandler(descriptionNode, _getComponent.call(this, position));
 	        // new GestureHandler(titleNode, _getComponent.call(this, position));
 	        //new GestureHandler(hexNode, _getComponent.call(this, position));
@@ -154,8 +155,11 @@ Meteor.startup(function(){
 	SelectionView.prototype.onReceive = function onReceive (event, payload) {
 		var prefix = new Transitionable([1,1]);
 		if(event === "goInsideMagazine"){
-			this.hide();
-			this.emit("showMenu",{id: this.currentMagazine});
+			this.opacity.set(0.2,{duration: 200}, function(){
+			//magazines[this.currentMagazine].opacity.set(0.7,{duration: 300}, function(){
+				this.hide();
+				this.emit("showMenu",{id: this.currentMagazine});
+			}.bind(this));
 		}
         this.receive(event, payload);
 	};
@@ -207,11 +211,13 @@ Meteor.startup(function(){
 		            dampingRatio: 0.5,
 		            anchor: anchor
 		        });
+				var opacity = new Opacity(body);
 		        this.simulation.add(box, spring);
 			result[i] = {
 				align: align,
 				body: body,
 	            box: box,
+	            opacity: opacity,
 	            anchor: anchor,
 	            spring: spring
 			};
