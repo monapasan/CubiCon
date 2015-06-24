@@ -9,6 +9,7 @@ Meteor.startup(function(){
     function HexFooter (data) {
         // subclass Node
         Node.call(this);
+        this.node = this.addChild();
         this.data = data;
         this.articleAmount = data.articles.length;
         //  this.numSections = data.articles.length;
@@ -17,7 +18,7 @@ Meteor.startup(function(){
         this.currentArticle = 0;
 
 
-        makeBg.call(this);
+        makeBg.call(this, this.node);
     }
     HexFooter.prototype = Object.create(Node.prototype);
 
@@ -36,9 +37,9 @@ Meteor.startup(function(){
         this.backgroundColor.setContent(this.data.articles[this.currentArticle].footerName);
         this.backgroundColor.setProperty('backgroundColor', this.data.articles[this.currentArticle].colorScheme);
     };
-    function makeBg(){
+    function makeBg(node){
         var content = this.data.articles[this.currentArticle].footerName;
-        var el = this.addChild().setAlign(0.5,0)
+        var el = node.addChild().setAlign(0.5,0)
                                 .setMountPoint(0.5,0)
                                 .setProportionalSize(0.5,undefined);
 /*        this.footer = new DOMElement(el,{
@@ -49,12 +50,15 @@ Meteor.startup(function(){
             content:content
         });
         //el.setP
-        var gestures = new GestureHandler(el);
-        gestures.on('tap', function(e){
-            console.log(1);
-            this.emit("changeArticle");
-            //this.emit("applyForce", {e: e});
-        }.bind(this));
+        this.gestures = new GestureHandler(el);
+        /*var gestures1 = new GestureHandler(this);
+        gestures.on("tap", function(e){
+            console.log(e)})*/
+        // gestures.on('tap', function(e){
+        //     console.log(1);
+        //     this.emit("changeArticle");
+        //     //this.emit("applyForce", {e: e});
+        // }.bind(this));
         
         this.backgroundColor.setProperty("backgroundColor", this.data.articles[this.currentArticle].colorScheme);
         var arrows = el.addChild().setProportionalSize(1,0.3).setAlign(0,0.5).setMountPoint(0,0.3);

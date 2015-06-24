@@ -21,7 +21,7 @@ Meteor.startup(function(){
     var RotationalDrag = physics.RotationalDrag;
     var Quaternion = math.Quaternion;
     var Vec3 = math.Vec3;
-	function SelectionView(data) {
+	function MagazineSelectorCtrl(data) {
 		Node.call(this);
 
 	    this.currentMagazine = 0;
@@ -44,13 +44,13 @@ Meteor.startup(function(){
 		this.opacity = new Opacity(this);
 	}
 
-	SelectionView.prototype = Object.create(Node.prototype);
-	SelectionView.prototype.constructor = SelectionView;
+	MagazineSelectorCtrl.prototype = Object.create(Node.prototype);
+	MagazineSelectorCtrl.prototype.constructor = MagazineSelectorCtrl;
 	var DISPLACEMENT_LIMIT = 50;
 	var DISPLACEMENT_PEEK = 50;
 	var DISPLACEMENT_THRESHOLD = 30;
 	var VELOCITY_THRESHOLD = 3000;
-    SelectionView.prototype.defineHeight = function defineHeight(size){
+    MagazineSelectorCtrl.prototype.defineHeight = function defineHeight(size){
         this.pageHeight = size[1];
         console.log(this.pageHeight);
     };
@@ -152,10 +152,10 @@ Meteor.startup(function(){
 		}.bind(this));
 	}
 
-	SelectionView.prototype.onReceive = function onReceive (event, payload) {
+	MagazineSelectorCtrl.prototype.onReceive = function onReceive (event, payload) {
 		var prefix = new Transitionable([1,1]);
 		if(event === "goInsideMagazine"){
-			this.opacity.set(0.2,{duration: 200}, function(){
+			this.opacity.set(0.2,{duration: 300}, function(){
 			//magazines[this.currentMagazine].opacity.set(0.7,{duration: 300}, function(){
 				this.hide();
 				this.emit("showMenu",{id: this.currentMagazine});
@@ -287,7 +287,7 @@ Meteor.startup(function(){
         return newIndex;
 	}
 
-	SelectionView.prototype.changeMagazine = function changeMagazine (from, to) {
+	MagazineSelectorCtrl.prototype.changeMagazine = function changeMagazine (from, to) {
 		var opacityChanger = new Transitionable([1, 0]);
     	var curve =  {duration: 700, curve: 'outBack'};
 		Utils.fadingOut(this.header, opacityChanger, 1);
@@ -357,12 +357,12 @@ Meteor.startup(function(){
 	    this.currentMagazine = to;
 	};
 
-	SelectionView.prototype.onParentMount = function onParentMount (parent, parentId, index) {
+	MagazineSelectorCtrl.prototype.onParentMount = function onParentMount (parent, parentId, index) {
     	this.mount(parent, parentId + '/' + index);
     	this.changeMagazine(null, this.currentMagazine);
    		return this;
 	};
-	SelectionView.prototype.onMount = function onMount (parent, id) {
+	MagazineSelectorCtrl.prototype.onMount = function onMount (parent, id) {
 	   Node.prototype.onMount.call(this, parent, id);
 	};
 
@@ -386,5 +386,5 @@ Meteor.startup(function(){
         </div>
 */
 
-	App.SelectionView  = SelectionView;
+	App.MagazineSelectorCtrl  = MagazineSelectorCtrl;
 });

@@ -1,0 +1,93 @@
+0 info it worked if it ends with ok
+1 verbose cli [ 'C:\\Program Files\\nodejs\\\\node.exe',
+1 verbose cli   'C:\\Program Files\\nodejs\\node_modules\\npm\\bin\\npm-cli.js',
+1 verbose cli   'install',
+1 verbose cli   '-g',
+1 verbose cli   'glsify@1.6.0' ]
+2 info using npm@1.4.23
+3 info using node@v0.10.31
+4 verbose node symlink C:\Program Files\nodejs\\node.exe
+5 verbose cache add [ 'glsify@1.6.0', null ]
+6 verbose cache add name=undefined spec="glsify@1.6.0" args=["glsify@1.6.0",null]
+7 verbose parsed url { protocol: null,
+7 verbose parsed url   slashes: null,
+7 verbose parsed url   auth: null,
+7 verbose parsed url   host: null,
+7 verbose parsed url   port: null,
+7 verbose parsed url   hostname: null,
+7 verbose parsed url   hash: null,
+7 verbose parsed url   search: null,
+7 verbose parsed url   query: null,
+7 verbose parsed url   pathname: 'glsify@1.6.0',
+7 verbose parsed url   path: 'glsify@1.6.0',
+7 verbose parsed url   href: 'glsify@1.6.0' }
+8 verbose cache add name="glsify" spec="1.6.0" args=["glsify","1.6.0"]
+9 verbose parsed url { protocol: null,
+9 verbose parsed url   slashes: null,
+9 verbose parsed url   auth: null,
+9 verbose parsed url   host: null,
+9 verbose parsed url   port: null,
+9 verbose parsed url   hostname: null,
+9 verbose parsed url   hash: null,
+9 verbose parsed url   search: null,
+9 verbose parsed url   query: null,
+9 verbose parsed url   pathname: '1.6.0',
+9 verbose parsed url   path: '1.6.0',
+9 verbose parsed url   href: '1.6.0' }
+10 verbose addNamed [ 'glsify', '1.6.0' ]
+11 verbose addNamed [ '1.6.0', '1.6.0' ]
+12 silly lockFile 0e34b2d7-glsify-1-6-0 glsify@1.6.0
+13 verbose lock glsify@1.6.0 C:\Users\Oleg\AppData\Roaming\npm-cache\0e34b2d7-glsify-1-6-0.lock
+14 verbose request where is /glsify
+15 verbose request registry https://registry.npmjs.org/
+16 verbose request id fc7aec429a0bd74c
+17 verbose url raw /glsify
+18 verbose url resolving [ 'https://registry.npmjs.org/', './glsify' ]
+19 verbose url resolved https://registry.npmjs.org/glsify
+20 verbose request where is https://registry.npmjs.org/glsify
+21 info trying registry request attempt 1 at 18:35:58
+22 http GET https://registry.npmjs.org/glsify
+23 http 404 https://registry.npmjs.org/glsify
+24 verbose headers { server: 'CouchDB/1.5.0 (Erlang OTP/R16B03)',
+24 verbose headers   'content-type': 'application/json',
+24 verbose headers   'cache-control': 'max-age=0',
+24 verbose headers   'content-length': '51',
+24 verbose headers   'accept-ranges': 'bytes',
+24 verbose headers   date: 'Wed, 24 Jun 2015 16:35:57 GMT',
+24 verbose headers   via: '1.1 varnish',
+24 verbose headers   age: '0',
+24 verbose headers   connection: 'keep-alive',
+24 verbose headers   'x-served-by': 'cache-fra1235-FRA',
+24 verbose headers   'x-cache': 'MISS',
+24 verbose headers   'x-cache-hits': '0',
+24 verbose headers   'x-timer': 'S1435163757.215859,VS0,VE104' }
+25 silly registry.get cb [ 404,
+25 silly registry.get   { server: 'CouchDB/1.5.0 (Erlang OTP/R16B03)',
+25 silly registry.get     'content-type': 'application/json',
+25 silly registry.get     'cache-control': 'max-age=0',
+25 silly registry.get     'content-length': '51',
+25 silly registry.get     'accept-ranges': 'bytes',
+25 silly registry.get     date: 'Wed, 24 Jun 2015 16:35:57 GMT',
+25 silly registry.get     via: '1.1 varnish',
+25 silly registry.get     age: '0',
+25 silly registry.get     connection: 'keep-alive',
+25 silly registry.get     'x-served-by': 'cache-fra1235-FRA',
+25 silly registry.get     'x-cache': 'MISS',
+25 silly registry.get     'x-cache-hits': '0',
+25 silly registry.get     'x-timer': 'S1435163757.215859,VS0,VE104' } ]
+26 silly lockFile 0e34b2d7-glsify-1-6-0 glsify@1.6.0
+27 silly lockFile 0e34b2d7-glsify-1-6-0 glsify@1.6.0
+28 error 404 404 Not Found: glsify
+28 error 404
+28 error 404 'glsify' is not in the npm registry.
+28 error 404 You should bug the author to publish it
+28 error 404
+28 error 404 Note that you can also install from a
+28 error 404 tarball, folder, or http url, or git url.
+29 error System Windows_NT 6.1.7601
+30 error command "C:\\Program Files\\nodejs\\\\node.exe" "C:\\Program Files\\nodejs\\node_modules\\npm\\bin\\npm-cli.js" "install" "-g" "glsify@1.6.0"
+31 error cwd C:\Users\Oleg\famoUs\FoxyHexagon
+32 error node -v v0.10.31
+33 error npm -v 1.4.23
+34 error code E404
+35 verbose exit [ 1, true ]

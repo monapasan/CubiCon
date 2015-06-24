@@ -16,9 +16,11 @@ Meteor.startup(function(){
 	var Box = Famous.Box;
 	var Quaternion = Famous.Quaternion;
 	var RotationalSpring = Famous.RotationalSpring;
+	var Position = Famous.Position;
 	function MenuView(data) {
 		this.options = Object.create(MenuView.DEFAULT_PROPERTIES);
 		Node.call(this);
+		this.node = this.addChild();
 	    this.currentMagazin = 0;
 		this.currentArticle = 0;
 	    this.articleAmount = data.length;
@@ -30,14 +32,14 @@ Meteor.startup(function(){
         this.simulation = new PhysicsEngine();
 
     // .requestUpdate will call the .onUpdate method next frame, passing in the time stamp for that frame
-    	//this.updater = {};
-    	//this.updater.onUpdate = onUpdate.bind(this);
-    	//FamousEngine.requestUpdate(this.updater);
+    	this.updater = {};
+    	this.updater.onUpdate = onUpdate.bind(this);
     	this.force = new Famous.Vec3();
 		//this.description = makeDescriptionView.call(this);
 		//doControlsEvents();
 		this.footers = _makeFooters.call(this, data);
 		this.menus = _makeMenus.call(this, data);
+    	FamousEngine.requestUpdate(this.updater);
 	}
 	MenuView.prototype = Object.create(Node.prototype);
 
@@ -49,7 +51,7 @@ Meteor.startup(function(){
 		return this;
 	};
 
-/*	function onUpdate(time) {
+	function onUpdate(time) {
 	    this.simulation.update(time);
 
 	    var page;
@@ -61,19 +63,19 @@ Meteor.startup(function(){
 
 	        // Get the transform from the `Box` body
 	        physicsTransform = this.simulation.getTransform(page.box);
-	        //p = physicsTransform.position;
-	        r = physicsTransform.rotation;
-
+	        // p = physicsTransform.position;
+	        //r = physicsTransform.rotation;
+	        //console.log(p);
 	        // Set the `imageNode`'s x-position to the `Box` body's x-position
-	        //page.node.setPosition(p[0] * this.pageWidth, 0, 0);
+	        // page.position.set(p[0], p[1], 0);
 
 	        // Set the `imageNode`'s rotation to match the `Box` body's rotation
-	        page.rotation.set(0, 0, 0, r[3]);
+	        //page.rotation.set(0, 0, 0, r[3]);
 	        //console.log(r[0], r[1], r[2], r[3]);
 	    }
 
 	    FamousEngine.requestUpdateOnNextTick(this.updater);
-	}*/
+	}
 
 	MenuView.prototype.hideElementsFromAnotherMagazine = function hideElementsFromAnotherMagazine(){
 /*		this.magazines.forEach(function(magazin){
@@ -199,45 +201,47 @@ Meteor.startup(function(){
 			var childForAlign = el.addChild();
 			var footer = makeFooter.call(this, childForAlign, magazin);
 			var align = new Align(childForAlign);
-/*			footer.onReceive = function(index, event, e){
-				if(event == "applyForce"){
-					e = e.e;
-					//console.log(payload);
-					//console.log(e.centerVelocity.x);
-                    this.force.set(e.centerDelta.x, 0, 0); // Add a force equal to change in X direction
-                    this.force.scale(20); // Scale the force up
-                    this.menus[index].box.applyForce(this.force); // Apply the force to the `Box` body
-                    this.menus[index].node.setOrigin(0.5,0.5, 0);
-                    //this.menus[index].rotation.set(0, 0, e.centerVelocity.x /1000);
+            footer.gestures.on('drag', function(index, e) {
+				//console.log(payload);
+				//console.log(e);
+                this.force.set(e.centerDelta.x, e.centerDelta.y, 0); // Add a force equal to change in X direction
+                this.force.scale(20); // Scale the force up
+                this.menus[index].box.applyForce(this.force); // Apply the force to the `Box` body
+                this.menus[index].node.setOrigin(0.5,0.5, 0);
+                //this.menus[index].rotation.set(0, 0, e.centerVelocity.x /1000);
 
-                    if (e.centerVelocity.x > this.threshold) {
-                        if (this.draggedIndex === index && this.currentArticle === index) {
-                            // Move index to left
-                            this.emit('changeArticle', {direction: -1});
-                        }
-                    }
-                    else if (e.centerVelocity.x < -this.threshold){
-                        if (this.draggedIndex === index && this.currentArticle === index) {
-                            this.emit('changeArticle', {direction: 1});
-                        }
-                    }
-
-                    if (e.status === 'start') {
-                        this.draggedIndex = index;
+                if (e.centerVelocity.x > this.threshold) {
+                    if (this.draggedIndex === index && this.currentArticle === index) {
+                        // Move index to left
+                        this.emit('changeArticle', {direction: -1});
                     }
                 }
-            }.bind(this, i);*/
+                else if (e.centerVelocity.x < -this.threshold){
+                    if (this.draggedIndex === index && this.currentArticle === index) {
+                        this.emit('changeArticle', {direction: 1});
+                    }
+                }
+
+                if (e.status === 'start') {
+                    this.draggedIndex = index;
+                }
+        	}.bind(this, i));
+		    footer.gestures.on('tap', function(e){
+		        console.log(1);
+		        this.emit("changeArticle");
+		        //this.emit("applyForce", {e: e});
+		    }.bind(this));
 			// 	}
 			// };
 	        // var gestureHandler = new GestureHandler(footer);
-         //    gestureHandler.on('drag', function(index, e) {
 
 			result.push({
 				align: align,
 				footer:footer
 			});
 			footer.hide();
-		}.bind(this));
+        }.bind(this));
+
 		return result;
 	}
 
@@ -252,7 +256,7 @@ Meteor.startup(function(){
 	            mass: 100,
 	            size: [100,100,100]
 	        });
-	        // except for first image node
+/*	        // except for first image node
 	        var quaternion = i === 0 ? new Quaternion() : new Quaternion().fromEuler(0, 0, -Math.PI/2);
 
 	        // Attach an anchor orientation to the `Box` body with a `RotationalSpring` torque
@@ -261,15 +265,21 @@ Meteor.startup(function(){
 	            dampingRatio: 0.2,
 	            anchor: quaternion
 	        });
+	        var Drag = Famous.Physics.Drag;
+			var drag = new Drag([box], {strength: 0.4});
 	        var rotation = new Famous.Rotation(node);
-	        //this.simulation.add(box, rotationalSpring);
+	        var position = new Famous.Position(node);
+	        var anchor = i === 0 ? new Famous.Vec3(0, 0, 0) : new Famous.Vec3(0, 1, 0);
+	        var spring = new Famous.Spring(null, box, {
+	            period: 0.6,
+	            dampingRatio: 0.5,
+	            anchor: anchor
+	        });
+*/	        //this.simulation.add(box, spring);
 			result.push({
 				align: new Align(childForAlign),
 				node: node,
-				rotation: rotation,
 				box: box,
-				quaternion: quaternion,
-				rotationalSpring: rotationalSpring
 			});
 			node.hide();
 		}.bind(this));

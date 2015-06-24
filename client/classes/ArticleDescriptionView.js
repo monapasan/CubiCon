@@ -10,9 +10,10 @@ Meteor.startup(function(){
 		this.options = Object.create(ArticleDescriptionView.DEFAULT_PROPERTIES);
         Node.apply(this,options);
         this.setOptions(options);
+        this.node = this.addChild();
 		this.data = data.articles[this.options.currentArticle];
         this.opacityChanger = new Transitionable(1);
-        this.hexagon = createHexagon.call(this);
+        this.hexagon = createHexagon.call(this, this.node);
         this.responsiveNode = this.addChild();
         this.title = createLine.call(this);
         this.description = createDescription.call(this);
@@ -36,8 +37,8 @@ Meteor.startup(function(){
     //     var title = this.addChild();
     //     var titleEl = new DOMElement() 
     // }
-    function createHexagon(){
-        var alignEl = this.addChild().setProportionalSize(1, 0.3);
+    function createHexagon(node){
+        var alignEl = node.setProportionalSize(1, 0.3);
         this.hexAlign = new Align(alignEl);
         this.hexagonPosition = new Position(alignEl);
         var hex = alignEl.addChild();

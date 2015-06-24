@@ -6,7 +6,7 @@ Meteor.startup(function(){
 	var Footer = App.Footer;
 	var Swapper = App.Swapper;
 	var ArticleSelectionBody = App.ArticleSelectionBody;
-	var SelectionView = App.SelectionView;
+	var MagazineSelectorCtrl = App.MagazineSelectorCtrl;
 
 	function HexMenu(data) {
 		Node.call(this);

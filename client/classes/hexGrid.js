@@ -18,6 +18,7 @@ Meteor.startup(function(){
 	function HexGrid(data, options){
 		this.options = Object.create(HexGrid.DEFAULT_PROPERTIES);
 		Node.apply(this, this.options);
+		this.root = this.addChild();
 		this.setOptions(options, data);
 	    this.currentArticle = this.options.currentArticle;
 		this.data = data.articles[this.currentArticle];
@@ -27,7 +28,7 @@ Meteor.startup(function(){
         //this.options.indent_y = calculateIndendtY.call(this);
         _generateCoords.call(this);
 		//console.log(this.hexWidth , this.hexHeight);
-		_makeHexagons.call(this);
+		_makeHexagons.call(this, this.root);
 	}
     HexGrid.prototype = Object.create(Node.prototype);
 	HexGrid.prototype.onReceive = function onReceive(event, payload){
@@ -113,19 +114,19 @@ Meteor.startup(function(){
         }
         Utils.hexCordinates = _.clone(this.cord);
     }
-	function _makeHexagons(){
+	function _makeHexagons(root){
 		this.hexs = [];
 		var hex, coord,el;
 		for(var i = 0; i < this.options.hexagonsAmount; i++){
 			data = this.data.sections[i];
 			cord = this.cord[data.position];
 			//console.log(cord);
-			hex = this.addChild().setSizeMode(0, 1)
-									.setProportionalSize(this.hexWidth, null)
-									.setAbsoluteSize(null, this.hexHeight)
-									//.setDifferentialSize(-46.66, -15)
-									.setAlign(cord.x, 0)
-									.setPosition(0, cord.y);
+			hex = root.addChild().setSizeMode(0, 1)
+					.setProportionalSize(this.hexWidth, null)
+					.setAbsoluteSize(null, this.hexHeight)
+					//.setDifferentialSize(-46.66, -15)
+					.setAlign(cord.x, 0)
+					.setPosition(0, cord.y);
 			//el = new DOMElement(hex,{tagName: 'img'}).setAttribute('src', data.menuUrl);
 			el = new DOMElement(hex);
 			//el.setContent('<div class="hexrow"><div style="background: url(Mandarins.jpg); no-repeat center">' +
