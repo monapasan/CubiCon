@@ -9,8 +9,7 @@ Template.main.rendered = function() {
     var scene;
     Famous.FamousEngine.init();
     scene = Famous.FamousEngine.createScene();
-
-    scene.addChild(new App.FoxyHexagon(this.data));
+    new App.FoxyHexagon(scene.addChild(), this.data)
 
 };
 

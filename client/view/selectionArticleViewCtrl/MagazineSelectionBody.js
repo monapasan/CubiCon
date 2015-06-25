@@ -12,25 +12,30 @@ Meteor.startup(function(){
     var RotationalDrag = physics.RotationalDrag;
     var Quaternion = math.Quaternion;
     var Vec3 = math.Vec3;
-    function ArticleSelectionBody (data, i) {
-        Node.call(this);
+    function MagazineSelectionBody (node, data, i) {
         this.data = data;
+        this.node = node.addChild();
         this.currentMagazine = i;
-        this.hexagon = _createHexagon.call(this);
-        this.titleNode = _createName.call(this);
-        this.description = _createDescription.call(this);
+        this.hexagon = _createHexagon.call(this, this.node);
+        this.titleNode = _createName.call(this, this.node);
+        this.description = _createDescription.call(this, this.node);
     }
-    ArticleSelectionBody.prototype = Object.create(Node.prototype);
+    MagazineSelectionBody.prototype = Object.create(Object.prototype);
 
-
-    function _createHexagon(){
+    MagazineSelectionBody.prototype.show = function show(){
+        this.node.show();
+    };
+    MagazineSelectionBody.prototype.hide = function hide(){
+        this.node.hide();
+    };
+    function _createHexagon(root){
     	var dataEl, el, hexEl, hexNode, dateNode, toMakeClickable;
     	var width,height;
 
         width = 0.5;
         height = Utils.getHexHeight(width);
 
-    	el = this.addChild();
+    	el = root.addChild();
 
         hexNode = el.addChild();
 		hexNode.setPosition(0, -35)
@@ -90,10 +95,10 @@ Meteor.startup(function(){
     }
 
     function _callEvents(){
-        this.emit("goInsideMagazine");
+        this.node.emit("goInsideMagazine");
     }
-    function _createName(){
-    	var nameNode = this.addChild()
+    function _createName(root){
+    	var nameNode = root.addChild()
 	    							  .setProportionalSize(0.73,0.25)
 	    							  .setAlign(0.5, 0.37)
 	    							  .setMountPoint(0.5,0);
@@ -105,8 +110,8 @@ Meteor.startup(function(){
         new GestureHandler(nameNode);
         return nameNode;
     }
-    function _createDescription(){
-    	var descriptionNode = this.addChild().setDifferentialSize(-100,0)
+    function _createDescription(root){
+    	var descriptionNode = root.addChild().setDifferentialSize(-100,0)
     										 .setProportionalSize(1, 0.4)
     										 .setAlign(0.5, 0.58)
     										 .setMountPoint(0.5, 0);
@@ -119,10 +124,10 @@ Meteor.startup(function(){
         return descriptionNode;
     }
 
-    // ArticleSelectionBody.prototype.onUpdate = function onUpdate(time){
+    // MagazineSelectionBody.prototype.onUpdate = function onUpdate(time){
     //     this.simulation.update(time);
     //     FamousEngine.requestUpdateOnNextTick(this);
     // };
 
-    App.ArticleSelectionBody = ArticleSelectionBody;
+    App.MagazineSelectionBody = MagazineSelectionBody;
 });

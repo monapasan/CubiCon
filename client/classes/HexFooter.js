@@ -6,11 +6,11 @@ Meteor.startup(function(){
     // the number of sections in the app
 
     // the footer will hold the nav buttons
-    function HexFooter (data) {
+    function HexFooter (node, data) {
         // subclass Node
-        Node.call(this);
-        this.node = this.addChild();
+        this.node = node.addChild();
         this.data = data;
+        setComponents.call(this, this.node);
         this.articleAmount = data.articles.length;
         //  this.numSections = data.articles.length;
         // object to store the buttons
@@ -20,19 +20,29 @@ Meteor.startup(function(){
 
         makeBg.call(this, this.node);
     }
-    HexFooter.prototype = Object.create(Node.prototype);
-
-    HexFooter.prototype.onReceive = function onReceive(event, payload){
-            if(event === "changeArticle") {
-                if(!this.isShown()){
-                    return;
-                }
-                console.log(event,this.currentArticle);
-                this.currentArticle +=1;
-                if(this.currentArticle >= this.articleAmount) this.currentArticle = 0;
-                this.changeTitleAndBg();
+    HexFooter.prototype.show = function(){
+        this.node.show();
+    }
+    HexFooter.prototype.hide = function hide(){
+        this.node.hide();
+    }
+    function setComponents(root){
+        var comp = {
+            onReceive: onReceive.bind(this)
+        };
+        root.addComponent(comp);
+    }
+    function onReceive(event, payload){
+        if(event === "changeArticle") {
+            if(!this.node.isShown()){
+                return;
             }
-    };
+            console.log(event,this.currentArticle);
+            this.currentArticle +=1;
+            if(this.currentArticle >= this.articleAmount) this.currentArticle = 0;
+            this.changeTitleAndBg();
+        }
+    }
     HexFooter.prototype.changeTitleAndBg = function changeTitleAndBg(){
         this.backgroundColor.setContent(this.data.articles[this.currentArticle].footerName);
         this.backgroundColor.setProperty('backgroundColor', this.data.articles[this.currentArticle].colorScheme);
@@ -54,11 +64,7 @@ Meteor.startup(function(){
         /*var gestures1 = new GestureHandler(this);
         gestures.on("tap", function(e){
             console.log(e)})*/
-        // gestures.on('tap', function(e){
-        //     console.log(1);
-        //     this.emit("changeArticle");
-        //     //this.emit("applyForce", {e: e});
-        // }.bind(this));
+
         
         this.backgroundColor.setProperty("backgroundColor", this.data.articles[this.currentArticle].colorScheme);
         var arrows = el.addChild().setProportionalSize(1,0.3).setAlign(0,0.5).setMountPoint(0,0.3);

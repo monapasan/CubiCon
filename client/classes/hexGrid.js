@@ -15,10 +15,9 @@ Meteor.startup(function(){
 	var HEX_HEIGHT = (HEX_WIDTH / (2 * Math.tan(Math.PI /6))) - margin_y;*/
     //HEX_WIDTH = HEX_WIDTH;
 
-	function HexGrid(data, options){
+	function HexGrid(node, data, options){
 		this.options = Object.create(HexGrid.DEFAULT_PROPERTIES);
-		Node.apply(this, this.options);
-		this.root = this.addChild();
+		this.node = node.addChild();
 		this.setOptions(options, data);
 	    this.currentArticle = this.options.currentArticle;
 		this.data = data.articles[this.currentArticle];
@@ -28,14 +27,16 @@ Meteor.startup(function(){
         //this.options.indent_y = calculateIndendtY.call(this);
         _generateCoords.call(this);
 		//console.log(this.hexWidth , this.hexHeight);
-		_makeHexagons.call(this, this.root);
+		_makeHexagons.call(this, this.node);
 	}
-    HexGrid.prototype = Object.create(Node.prototype);
-	HexGrid.prototype.onReceive = function onReceive(event, payload){
-		// if(event === "insideArticle"){
-		// 	showElements.call(this);
-		// }
-	};
+    HexGrid.prototype = Object.create(Object.prototype);
+
+    HexGrid.prototype.show = function(){
+        this.node.show();
+    }
+    HexGrid.prototype.hide = function hide(){
+        this.node.hide();
+    }
 	function createComponent(node,transitionable, i){
         var id  = node.addComponent({
             onUpdate: function(){
@@ -47,6 +48,7 @@ Meteor.startup(function(){
         node.requestUpdate(id);
 	}
 	HexGrid.prototype.showElements = function showElements(){
+		this.node.show();
 		var opacityTrans = new Transitionable([0,0,0,0]);
 		this.hexs.sort(function(a, b){
 			if(a.position === 5){
@@ -66,6 +68,7 @@ Meteor.startup(function(){
 		}.bind(this));
 	};
 	HexGrid.prototype.hideElements = function hideElements(){
+		this.node.hide();
 		this.hexs.forEach(function(hex){
 			hex.opacityText.set(0,{duration:1});
 			hex.opacityHex.set(0,{duration:1});

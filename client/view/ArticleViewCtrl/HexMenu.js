@@ -5,32 +5,37 @@ Meteor.startup(function(){
 	var Header = App.Header;
 	var Footer = App.Footer;
 	var Swapper = App.Swapper;
-	var ArticleSelectionBody = App.ArticleSelectionBody;
-	var MagazineSelectorCtrl = App.MagazineSelectorCtrl;
 
-	function HexMenu(data) {
-		Node.call(this);
+	function HexMenu(node, data) {
 		this.data = data;
+		this.node = node.addChild();
 		this.currentArticle = 0;
-		this.descriptionsParent = this.addChild();
-		this.gridsParent = this.addChild();
+		setComponents.call(this,this.node);
+		this.descriptionsParent = this.node.addChild();
+		this.gridsParent = this.node.addChild();
 		this.amountArticles = this.data.articles.length;
 		this.grids = _makeHexGrids.call(this);
 		this.descriptions = _makeArticleDesc.call(this);
 	
 	}
-    HexMenu.prototype = Object.create(Node.prototype);
+    HexMenu.prototype = Object.create(Object.prototype);
 
 	HexMenu.prototype.showAppropriateArticle = function showAppropriateArticle(){
-			this.descriptions.forEach(function(desc, i){
-				if(i === this.currentArticle) {
-					this.descriptions[i].align.set(0,0,0, {duration: 1});
-				}
-				else{
-					this.descriptions[i].align.set(-1,0,0, {duration: 1});
-				}
-			}.bind(this));
+		this.descriptions.forEach(function(desc, i){
+			if(i === this.currentArticle) {
+				this.descriptions[i].align.set(0,0,0, {duration: 1});
+			}
+			else{
+				this.descriptions[i].align.set(-1,0,0, {duration: 1});
+			}
+		}.bind(this));
 	};
+    HexMenu.prototype.show = function show(){
+        this.node.show();
+    };
+    HexMenu.prototype.hide = function hide(){
+        this.node.hide();
+    };
 
 
 
@@ -50,11 +55,14 @@ Meteor.startup(function(){
 		}.bind(this));
 	};
 
-	HexMenu.prototype.doControlView = function doControlView(currentMagazin){
+	function setComponents(node){
+		var comp = {
+			onReceive: onReceive.bind(this)
+		};
+		node.addComponent(comp);
+	}
 
-	};
-
-	HexMenu.prototype.onReceive = function onReceive(event, payload){
+	function onReceive(event, payload){
 		if(event === "showMenu") {
 			this.gridsParent.hide();
 			//this.showAppropriateArticle();
@@ -70,20 +78,20 @@ Meteor.startup(function(){
 			this.descriptionsParent.hide();
 			//this.showAppropriateHexagonMenu();
 		}
-		if(event === 'showArticleBody'){
-			this.doControlView(payload.currentMagazin);
-		}
-	};
+		// if(event === 'showArticleBody'){
+		// 	this.doControlView(payload.currentMagazin);
+		// }
+	}
 
-	
 	function _makeArticleDesc(){
 		var result = [];
 		this.data.articles.forEach(function(article, i){
 			var childForAlign = this.descriptionsParent.addChild();
 			var align = new Align(childForAlign);
+			var desc = new App.ArticleDescriptionView(childForAlign.addChild(), this.data, {currentArticle:i});
 			result.push({
 				align: new Align(childForAlign),
-				description: childForAlign.addChild(new App.ArticleDescriptionView(this.data, {currentArticle:i}))
+				description: desc
 			});
 			align.set(-1,0,0);
 		}.bind(this));
@@ -95,9 +103,10 @@ Meteor.startup(function(){
 		this.data.articles.forEach(function(article, i){
 
 			var childForAlign = this.gridsParent.addChild();
+			var grid = new App.HexGrid(childForAlign, this.data,{currentArticle:i});
 			result.push({
 				align: new Align(childForAlign),
-				grid: childForAlign.addChild(new App.HexGrid(this.data,{currentArticle:i}))
+				grid: grid
 			});
 
 		}.bind(this));

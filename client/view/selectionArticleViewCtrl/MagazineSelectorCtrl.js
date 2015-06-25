@@ -9,7 +9,7 @@ Meteor.startup(function(){
 	var Footer = App.Footer;
 	var Swapper = App.Swapper;
 	var GestureHandler = Famous.GestureHandler;
-	var ArticleSelectionBody = App.ArticleSelectionBody;
+	var MagazineSelectionBody = App.MagazineSelectionBody;
     var PhysicsEngine = Famous.PhysicsEngine;
     var FamousEngine = Famous.FamousEngine;
 	var Transitionable = Famous.Transitionable;
@@ -21,48 +21,67 @@ Meteor.startup(function(){
     var RotationalDrag = physics.RotationalDrag;
     var Quaternion = math.Quaternion;
     var Vec3 = math.Vec3;
-	function MagazineSelectorCtrl(data) {
-		Node.call(this);
-
+    var Dispatch = famous.core.Dispatch;
+	function MagazineSelectorCtrl(node, data) {
+		//define states
 	    this.currentMagazine = 0;
 	    this.data = data;
-	    //this.currentSection = data[this.currentMagazine]._id;
+	    this.node = node.addChild();
 	    this.articleAmount = data.length;
-		this.addComponent(getResizeComponent.call(this));
-	    _makeBackground.call(this);
-	    _makeHeader.call(this);
-		_makeFooter.call(this);
-		_bindEvents.call(this);
-		this.magazines = _makeMagazines.call(this);
-		_bindDragEvents.call(this);
+		this.node.addComponent(getResizeComponent.call(this));
+		// create elements
+	    _makeBackground.call(this, this.node);
+	    _makeHeader.call(this, this.node);
+		_makeFooter.call(this, this.node);
+		_bindEvents.call(this, this.node);
+		this.magazines = _makeMagazines.call(this, this.node);
+
 		this.force = new Famous.Vec3();
 		this.toogle = true;
 		this.updater = {};
 		this.updater.onUpdate = onUpdate.bind(this);
 		this.force = new Vec3();
 		FamousEngine.requestUpdate(this.updater);
-		this.opacity = new Opacity(this);
+		this.opacity = new Opacity(this.node);
 	}
 
-	MagazineSelectorCtrl.prototype = Object.create(Node.prototype);
 	MagazineSelectorCtrl.prototype.constructor = MagazineSelectorCtrl;
 	var DISPLACEMENT_LIMIT = 50;
 	var DISPLACEMENT_PEEK = 50;
 	var DISPLACEMENT_THRESHOLD = 30;
 	var VELOCITY_THRESHOLD = 3000;
+
     MagazineSelectorCtrl.prototype.defineHeight = function defineHeight(size){
-        this.pageHeight = size[1];
+        // v.5.2.0
+        //this.pageHeight = size[1];
+        this.pageHeight = size;
         console.log(this.pageHeight);
     };
+    MagazineSelectorCtrl.prototype.show = function show(){
+        this.node.show();
+    };
+    MagazineSelectorCtrl.prototype.hide = function hide(){
+        this.node.hide();
+    };
 
-    function getResizeComponent(){
+/*    v5.2.0
+	function getResizeComponent(){
         var resizeComponent = {
             onSizeChange: function(size) {
                 this.defineHeight(size);
             }.bind(this)
         };
         return resizeComponent;
+    }*/
+   	function getResizeComponent(){
+        var resizeComponent = {
+            onSizeChange: function(width, height, deepth) {
+                this.defineHeight(height || width[1]);
+            }.bind(this)
+        };
+        return resizeComponent;
     }
+
 	function onUpdate(time) {
 	    this.simulation.update(time);
 
@@ -76,23 +95,14 @@ Meteor.startup(function(){
 	        // Get the transform from the `Box` body
 	        physicsTransform = this.simulation.getTransform(page.box);
 	        p = physicsTransform.position;
-	        //r = physicsTransform.rotation;
 	        yPos = Math.round(p[1] * this.pageHeight * 100) / 100;
 	        // Set the `imageNode`'s x-position to the `Box` body's x-position
-	        page.body.setPosition(0, yPos, 0);
+	        page.body.node.setPosition(0, yPos, 0);
 
-	        // Set the `imageNode`'s rotation to match the `Box` body's rotation
-	        //page.setRotation(r[0], r[1], r[2], r[3]);
+	
 	    }
 
 	    FamousEngine.requestUpdateOnNextTick(this.updater);
-	}
-
-	function _getComponent(position){
-		return [{
-			event: 'drag',
-			callback: _getDragCallback.bind(this, position)
-		}];
 	}
 
 	function _getDragCallback(position, e) {
@@ -117,11 +127,11 @@ Meteor.startup(function(){
   //       	var direction;
   //       	if(currentPosition > DISPLACEMENT_THRESHOLD || velocity > VELOCITY_THRESHOLD){
   //       		direction = -1;
-  //       		this.emit('changeMagazine', {direction: direction});
+  //       		this.node.emit('changeMagazine', {direction: direction});
   //   		}
   //       	else if (currentPosition < -DISPLACEMENT_THRESHOLD || velocity < -VELOCITY_THRESHOLD){
   //       		direction = 1;
-  //       		this.emit('changeMagazine', {direction: direction});
+  //       		this.node.emit('changeMagazine', {direction: direction});
   //   		}
   //   		var shouldGoBack = getNextIndex.call(this,direction);
   //       	if(this.currentMagazine === shouldGoBack || !shouldGoBack){
@@ -130,77 +140,38 @@ Meteor.startup(function(){
   //       }
 
 	}
-
-	function getToogleCallback(){
-		this.toogle = true;
-	}
-
-	function _bindDragEvents(){
-
-		var trans = new Transitionable();
-		this.magazines.forEach(function(magazine, i){
-			var descriptionNode = magazine.body.description;
-			var titleNode = magazine.body.titleNode;
-			var hexNode = magazine.body.hexagon;
-
-        	var position = new Famous.Position(magazine.body);
-
-	        // new GestureHandler(descriptionNode, _getComponent.call(this, position));
-	        // new GestureHandler(titleNode, _getComponent.call(this, position));
-	        //new GestureHandler(hexNode, _getComponent.call(this, position));
-
-		}.bind(this));
-	}
-
-	MagazineSelectorCtrl.prototype.onReceive = function onReceive (event, payload) {
+	function onReceive(event, payload){
 		var prefix = new Transitionable([1,1]);
 		if(event === "goInsideMagazine"){
 			this.opacity.set(0.2,{duration: 300}, function(){
 			//magazines[this.currentMagazine].opacity.set(0.7,{duration: 300}, function(){
-				this.hide();
-				this.emit("showMenu",{id: this.currentMagazine});
+				this.node.hide();
+				this.node.emit("showMenu",{id: this.currentMagazine});
 			}.bind(this));
 		}
-        this.receive(event, payload);
-	};
+        //this.receive(event, payload);
+	}
 
-	function _makeBackground(){
-		this.backgroundColor = new DOMElement(this, {
+	function _makeBackground(root){
+		this.backgroundColor = new DOMElement(root, {
             classes: ['bg']
         });
 	}
 
-	function _makeMagazines(articleNumber) {
+	function _makeMagazines(root) {
 		this.simulation = new PhysicsEngine();
 	    var result = [];
 	    this.data.forEach(function(dataItem, i){
-	    	var child = this.addChild()
+	    	var child = root.addChild()
 		        .setDifferentialSize(null, -100)
 		        .setPosition(0, 80);
+
 		        var align = new Align(child);
-		        var body = child.addChild(new ArticleSelectionBody(this.data[i], i));
-                var gestureHandler = new GestureHandler(body);
-            	gestureHandler.on('drag', function(index, e) {
-	                this.force.set(0, e.centerDelta.y, 0); // Add a force equal to change in X direction
-			        this.force.scale(20); // Scale the force up
-			        this.magazines[index].box.applyForce(this.force); // Apply the force to the `Box` body
+		        //var body = child.addChild(new MagazineSelectionBody(this.data[i], i));
+		        var body = new MagazineSelectionBody(child, this.data[i], i);
+                var gestureHandler = new GestureHandler(body.node);
+            	gestureHandler.on('drag',createDragHandler.bind(this, i));
 
-			        if (e.centerVelocity.y > VELOCITY_THRESHOLD) {
-			            if (this.draggedIndex === index && this.currentMagazine === index) {
-			                // Move index to left
-			                this.emit('changeMagazine', {direction: -1});
-			            }
-			        }
-			        else if (e.centerVelocity.y < -VELOCITY_THRESHOLD){
-			            if (this.draggedIndex === index && this.currentMagazine === index) {
-			                this.emit('changeMagazine', {direction: 1});
-			            }
-			        }
-
-			        if (e.status === 'start') {
-			            this.draggedIndex = index;
-			        }
-		   		}.bind(this, i));
 	            var box = new Box({
 		            mass: 100,
 		            size: [100,100,100]
@@ -211,8 +182,9 @@ Meteor.startup(function(){
 		            dampingRatio: 0.5,
 		            anchor: anchor
 		        });
-				var opacity = new Opacity(body);
+				var opacity = new Opacity(body.node);
 		        this.simulation.add(box, spring);
+
 			result[i] = {
 				align: align,
 				body: body,
@@ -226,9 +198,34 @@ Meteor.startup(function(){
 	    return result;
 	}
 
-	function _makeHeader() {
+	function createDragHandler(index, e){
+        this.force.set(0, e.centerDelta.y, 0); // Add a force equal to change in X direction
+        this.force.scale(20); // Scale the force up
+        this.magazines[index].box.applyForce(this.force); // Apply the force to the `Box` body
+        if (e.centerVelocity.y > VELOCITY_THRESHOLD) {
+            if (this.draggedIndex === index && this.currentMagazine === index) {
+                // Move index to left
+                _callEvents.call(this.node, -1);
+                //this.node.emit('changeMagazine', {direction: -1});
+                //App.Dispatch = new famous.core.Dispatch();
+                //App.Dispatch.dispatchEvent('changeMagazine', {direction: -1});
+            }
+        }
+        else if (e.centerVelocity.y < -VELOCITY_THRESHOLD){
+            if (this.draggedIndex === index && this.currentMagazine === index) {
+                _callEvents.call(this.node, 1);
+                //this.node.emit('changeMagazine', {direction: 1});
+            }
+        }
 
-	    this.header = this.addChild()
+        if (e.status === 'start') {
+            this.draggedIndex = index;
+        }
+	} 
+
+	function _makeHeader(root) {
+
+	    this.header = root.addChild()
 	        .setSizeMode('default', 'absolute')
 	        .setAbsoluteSize(null, 50)
 	        .setMountPoint(0.5, 0)
@@ -238,17 +235,18 @@ Meteor.startup(function(){
 	    });
 	    this.header.direction = -1;
 	    var gestures = new GestureHandler(this.header);
-	    gestures.on("tap", _callEvents.bind(this.header));
+	    gestures.on("tap", _callEvents.bind(this.header,this.header.direction));
 
 
 	}
 
-	function _callEvents(e, payload){
-		this.emit('changeMagazine', {direction: this.direction});
+	function _callEvents(direction){
+		//this.emit('changeMagazine', {direction:direction});
+		Dispatch.e
 	}
 
-	function _makeFooter(){
-		this.footer = this.addChild()
+	function _makeFooter(root){
+		this.footer = root.addChild()
 						.setSizeMode('default', 'absolute')
 						.setAbsoluteSize(null, 50)
 						.setMountPoint(0, 1)
@@ -258,11 +256,11 @@ Meteor.startup(function(){
 	    });
 	    this.footer.direction = 1;
 	    var gestures = new GestureHandler(this.footer);
-	    gestures.on("tap", _callEvents.bind(this.footer));
+	    gestures.on("tap", _callEvents.bind(this.footer, this.footer.direction));
 	}
 
 	function  _bindEvents(){
-		this.addComponent({
+		this.node.addComponent({
 			onReceive:function(e, payload){
 				if(e === 'changeMagazine'){
 					var newIndex = getNextIndex.call(this, payload.direction);
@@ -271,6 +269,10 @@ Meteor.startup(function(){
 			            this.changeMagazine(oldIndex, newIndex);
 					}
 				}
+				onReceive.call(this, e, payload);
+			}.bind(this),
+			onShow: function(){
+    			this.changeMagazine(null, this.currentMagazine);
 			}.bind(this)
 		});
 	}
@@ -299,52 +301,16 @@ Meteor.startup(function(){
 
 		if (from < to) {
 	        this.magazines[from].anchor.set(0, -1, 0);
-	        // this.pages[from].quaternion.fromEuler(0, Math.PI/2, 0);
 	        this.magazines[to].anchor.set(0, 0, 0);
-	        // this.pages[to].quaternion.set(1, 0, 0, 0);
 	    } 
 	    else if(from > to){
 	        this.magazines[from].anchor.set(0, 1, 0);
-	        // this.pages[from].quaternion.fromEuler(0, -Math.PI/2, 0);
 	        this.magazines[to].anchor.set(0, 0, 0);
-	        // this.pages[to].quaternion.set(1, 0, 0, 0);
 	    }
 		if(from === null){
 			opacityChanger.set([1,0]);
-	        // this.magazines[to].anchor.set(0, 0, 0);
 		}
-/*	    else if (from < to) {
-	        this.magazines[from].anchor.set(0, -1, 0);
-	        // this.pages[from].quaternion.fromEuler(0, Math.PI/2, 0);
-	        this.magazines[to].anchor.set(0, 0, 0);
-	        // this.pages[to].quaternion.set(1, 0, 0, 0);
-	    } else if(from > to){
-	        this.magazines[from].anchor.set(0, 1, 0);
-	        // this.pages[from].quaternion.fromEuler(0, -Math.PI/2, 0);
-	        this.magazines[to].anchor.set(0, 0, 0);
-	        // this.pages[to].quaternion.set(1, 0, 0, 0);
-	    }*/
-/*
-		if(from === null){
-			for(var i = 0; i < this.articleAmount; i++){
-				if(i == to){
-					this.magazines[i].align.set(0, 0, 0, curve);
-				}
-				else{
-					this.magazines[i].align.set(0, 1, 0, curve);
-				}
-			}
-		}
-		else if(from < to){
-			this.magazines[from].align.set(0, -1, 0, curve, cb.bind(this.magazines[from].body));
-			this.magazines[to].align.set(0, 0, 0, curve, getToogleCallback.bind(this));
-		}
-		else {
-			this.magazines[from].align.set(0, 1, 0, curve, cb.bind(this.magazines[from].body));
-			this.magazines[to].align.set(0, 0, 0, curve, getToogleCallback.bind(this));
-		}*/
-		// fading out the Arrows if the current article
-		// is last or first one
+		// if the magazine the first remove header, if the last footer
 	    if(to == this.articleAmount - 1){
 			opacityChanger.set([0, 1], {duration:700});
 	    }
@@ -356,35 +322,6 @@ Meteor.startup(function(){
 	    }
 	    this.currentMagazine = to;
 	};
-
-	MagazineSelectorCtrl.prototype.onParentMount = function onParentMount (parent, parentId, index) {
-    	this.mount(parent, parentId + '/' + index);
-    	this.changeMagazine(null, this.currentMagazine);
-   		return this;
-	};
-	MagazineSelectorCtrl.prototype.onMount = function onMount (parent, id) {
-	   Node.prototype.onMount.call(this, parent, id);
-	};
-
-
-/*	function makeHeader(node) {
-	    // the header will be positioned defaultly
-	    // along the top of its parent.
-	    // It will be the complete width of its parent
-	    // and 100 pixels tall.
-	    node.addChild()
-	        .setSizeMode('default', 'absolute')
-	        .setAbsoluteSize(null, 100)
-	        .addChild(new Header());
-	}
-	        <div class="hexrow">
-            <div>
-                <span>Hex Text</span>
-                <div></div>
-                <div></div>
-            </div>
-        </div>
-*/
 
 	App.MagazineSelectorCtrl  = MagazineSelectorCtrl;
 });

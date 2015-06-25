@@ -6,15 +6,14 @@ Meteor.startup(function(){
     var Position = Famous.Position;
     var Opacity = Famous.Opacity;
     var Transitionable= Famous.Transitionable;
-	function ArticleDescriptionView(data, options){
+	function ArticleDescriptionView(node, data, options){
 		this.options = Object.create(ArticleDescriptionView.DEFAULT_PROPERTIES);
-        Node.apply(this,options);
         this.setOptions(options);
-        this.node = this.addChild();
+        this.node = node.addChild();
 		this.data = data.articles[this.options.currentArticle];
         this.opacityChanger = new Transitionable(1);
         this.hexagon = createHexagon.call(this, this.node);
-        this.responsiveNode = this.addChild();
+        this.responsiveNode = node.addChild();
         this.title = createLine.call(this);
         this.description = createDescription.call(this);
         this.lineOpacity = new Opacity(this.description);
@@ -23,7 +22,6 @@ Meteor.startup(function(){
 
 
 	}
-    ArticleDescriptionView.prototype = Object.create(Node.prototype);
     ArticleDescriptionView.prototype.constructor = ArticleDescriptionView;
     ArticleDescriptionView.prototype.setOptions = function setOptions(options){
         if(!options) return;
@@ -32,6 +30,13 @@ Meteor.startup(function(){
     ArticleDescriptionView.DEFAULT_PROPERTIES = {
         currentArticle:0
     };
+
+    ArticleDescriptionView.prototype.show = function show(){
+        this.node.show();
+    }
+    ArticleDescriptionView.prototype.hide = function hide(){
+        this.node.hide();
+    }
     // maybe if i have a time
     // function createBigTitle(){
     //     var title = this.addChild();
@@ -72,7 +77,7 @@ Meteor.startup(function(){
     }
     function emitGoInsideArticle(){
         this.hexOpacity.set(0.2,{duration: 300}, function(){
-            this.emit("insideArticle",{node: this});
+            this.node.emit("insideArticle",{node: this.node});
             setTimeout(function(){
                 this.hexagonPosition.set(0, 0, 0, {duration: 1});
                 this.hexOpacity.set(1,{duration:1});

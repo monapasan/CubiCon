@@ -5,27 +5,21 @@ Meteor.startup(function(){
 	var Header = App.Header;
 	var Footer = App.Footer;
 	var Swapper = App.Swapper;
-	var ArticleSelectionBody = App.ArticleSelectionBody;
 	var MagazineSelectorCtrl = App.MagazineSelectorCtrl;
-	function FoxyHexagon(data) {
-		Node.call(this);
+	function FoxyHexagon(node, data) {
 		this.data = data;
-
-		_makeMagazineSelectorCtrl.call(this);
-		_makeArticleView.call(this);
+		this.node = node.addChild();
+		_makeMagazineSelectorCtrl.call(this, this.node);
+		_makeArticleView.call(this, this.node);
 	}
-	FoxyHexagon.prototype = Object.create(Node.prototype);
+	FoxyHexagon.prototype = Object.create(Object.prototype);
 
+	function _makeArticleView(node){
+		new App.ArticleMenu(node, this.data);
 
-/*	FoxyHexagon.prototype.onMount = function(parent, myId) {
-    	return this.mount(parent, myId);
-	};*/
-
-	function _makeArticleView(){
-		var child = this.addChild(new App.MenuView(this.data));
 	}
-	function _makeMagazineSelectorCtrl(){
-		this.addChild(new App.MagazineSelectorCtrl(this.data));
+	function _makeMagazineSelectorCtrl(node){
+		new App.MagazineSelectorCtrl(node, this.data);
 	}
 
 	App.FoxyHexagon = FoxyHexagon;
