@@ -78,7 +78,7 @@ Meteor.startup(function () {
             }
           ]
         };
-        var anotherArticle = {
+        var article1 = {
               name: 'DAS ON-Leid',
               footerName: 'BOOT CAMP',
               colorScheme: "#E1193E",
@@ -87,9 +87,9 @@ Meteor.startup(function () {
               sections:[
                 {
                   shortName: 'Help me Help you',
-                  type: 'text',
+                  type: 'about',
                   position: 3,
-                  menuUrl: "img/Article1/SpiralIsland.png",
+                  menuUrl:"http://lorempixel.com/300/300/nature/",
                   content:{
                     article: "The mother-child relationship is paradoxical and, in a sense, tragic. It requires the most intense love on the mother's side, yet this very love must help the child grow away from the mother, and to become fully independent.",
                     audio : "",
@@ -100,10 +100,10 @@ Meteor.startup(function () {
                   }
                 },
                 {
-                  type: 'text',
+                  type: 'questions',
                   position:7,
                   shortName: 'Me, Myself and i',
-                  menuUrl:"img/Article1/RichardIowa.png",
+                  menuUrl:"http://lorempixel.com/300/300/nature/",
                   content:{
                     article: "The mother-child relationship is paradoxical and, in a sense, tragic. It requires the most intense love on the mother's side, yet this very love must help the child grow away from the mother, and to become fully independent.",
                     audio : "",
@@ -115,9 +115,9 @@ Meteor.startup(function () {
                 },
                 {
                   position: 8,
-                  menuUrl:"img/Article1/MathewAlbanes.png",
+                  menuUrl:"http://lorempixel.com/300/300/nature/",
                   shortName: 'Sucht in Zahlen',
-                  type: 'text',
+                  type: 'galerie',
                   content:{
                     article: "The mother-child relationship is paradoxical and, in a sense, tragic. It requires the most intense love on the mother's side, yet this very love must help the child grow away from the mother, and to become fully independent.",
                     audio : "",
@@ -131,7 +131,7 @@ Meteor.startup(function () {
                   type: 'text',
                   shortName: 'Das ON-Leid',
                   position: 5,
-                  menuUrl:"img/Article1/DiyInseln.png",
+                  menuUrl:"http://lorempixel.com/300/300/nature/",
                   content:{
                     text: "The mother-child relationship is paradoxical and, in a sense, tragic. It requires the most intense love on the mother's side, yet this very love must help the child grow away from the mother, and to become fully independent.",
                     audio : "",
@@ -143,7 +143,15 @@ Meteor.startup(function () {
                 }
               ]
             };
-            var articleNumberThree = {
+            article1.sections[3].content.text ='Liegestütze statt Netzsperre, Küchendienst statt PC-Verbot: In China bieten Hunderte sogenannter Erziehungszentren Eltern an, deren Kindern das Websurfen auszutreiben - mit Methoden, die an militärische Ausbildungslager erinnern. Chinesischen Jugendlichen, die in den Augen von Eltern und Obrigkeit zu viel Zeit im Internet verbringen, drohen drastische Maßnahmen. Wie die Nachrichtenagentur Reuters berichtet, sind in dem asiatischen Land in den letzten Jahren rund 250 sogenannte "Erziehungszentren" entstanden. Mit militärischem Drill und psychologischer Betreuung wollen die Einrichtungen den Zöglingen "die Fähigkeit ein normales Leben zu leben" vermitteln. Als typisch wird der Fall eines Teenagers genannt, der nur seinen chinesischen Nachnamen, Wang, nennen wollte. Seinen Eltern hätten ihm nicht erlaubt, draußen zu spielen, berichtet der junge Mann. Stattdessen habe er immer zu Hause bleiben und lernen sollen. Dann schildert er, was der Albtraum der behütenden Eltern gewesen sein dürfte: Statt zu tun wie ihm geheißen, verbrachte er immer mehr Zeit im Netz, will einmal an einem Stück acht Tage ohne Unterbrechung sein liebstes Onlinespiel gespielt haben. Resultat dieses Verhaltens seien nicht nur immer schlechtere Schulnoten, sondern auch ein Realitätsverlust gewesen. Statt aus Erfolgen im echten Leben, habe Wang schließlich mehr Befriedigung daraus gezogen, ein Level weiterzukommen. Reuters zitiert den Psychologen Tao Ran mit der Erklärung, Jugendliche wie Wang seien anfällig für Angstzustände und einen Verlust des Selbstver- trauens, weil sie "die Erwartung ihrer Eltern nicht erfüllen können, jede Herausforderung perfekt zu meistern". Bei Wang sei eine entsprechende "Internet-Suchtstörung" schnell diagnostiziert worden, woraufhin ihn seine Eltern in das Erziehungslager Qide in Peking einweisen ließen. Xing Liming, ein leitender Mitarbeiter des Lagers, sagte der Nachrichtenagentur: "Erziehung und das Leben in einer militärischen Umgebung sorgen für Disziplin." Zudem würde das militärische Training bei den Insassen helfen, " die körperliche Stärke zu verbessern und gute Lebensgewohnheiten zu entwickeln".';
+            article1.sections[3].content.audio = 'article2/content/text/article2.mp3';
+            article1.sections[3].content.video = 'https://www.youtube.com/embed/XMUYoiUlutM';
+            article1.sections[3].content.headerImg = 'article2/content/text/article2.png';
+            article1.sections[3].content.title = 'DAS ON-LEID';
+
+            //article1.sections[3].content.textTmpl.video = 'article2/content/article2/'
+
+            var article2 = {
                   name: 'Marijuana’s Secrets',
                   footerName: 'Science',
                   colorScheme: "#afbe08",
@@ -153,7 +161,7 @@ Meteor.startup(function () {
                       shortName: 'THE CHEMIST',
                       type: 'text',
                       position: 0,
-                      menuUrl: "img/Article1/SpiralIsland.png",
+                      menuUrl:"img/Article1/SpiralIsland.png",
                       content:{
                         article: "The mother-child relationship is paradoxical and, in a sense, tragic. It requires the most intense love on the mother's side, yet this very love must help the child grow away from the mother, and to become fully independent.",
                         audio : "",
@@ -207,8 +215,8 @@ Meteor.startup(function () {
                     }
                   ]
                 };
-                magazineTemplate.articles.push(anotherArticle);
-                magazineTemplate.articles.push(articleNumberThree);
+                magazineTemplate.articles.push(article1);
+                magazineTemplate.articles.push(article2);
         /*
             },
             {
@@ -275,8 +283,8 @@ Meteor.startup(function () {
           date: "05 | 15",
           articles: []
         };
-        anotherOne.articles.push(anotherArticle);
-        anotherOne.articles.push(articleNumberThree);/*
+        anotherOne.articles.push(article1);
+        anotherOne.articles.push(article2);/*
         anotherOne.articles[0].colorScheme = "#13ac4c";
         anotherOne.articles[1].colorScheme = "#5d6961";*/
 
@@ -290,8 +298,8 @@ Meteor.startup(function () {
           date: "10 | 15",
           articles: []
         };
-        oneMore.articles.push(articleNumberThree);
-        oneMore.articles.push(anotherArticle);
+        oneMore.articles.push(article2);
+        oneMore.articles.push(article1);
         /*
         oneMore.articles[0].colorScheme = "#c800c6";
         oneMore.articles[1].colorScheme = "#6a43bd";*/

@@ -43,18 +43,25 @@ Meteor.startup(function(){
 	}
 	ArticleMenu.prototype = Object.create(Object.prototype);
 
+	ArticleMenu.DEFAULT_PROPERTIES = {
+		footerSize:50
+	};
+
 	ArticleMenu.prototype.constructor = ArticleMenu;
+
     ArticleMenu.prototype.show = function show(){
         this.node.show();
     };
+
     ArticleMenu.prototype.hide = function hide(){
         this.node.hide();
     };
 	function setComponents(node){
+		//onShow v0.6.2
 		var component = {
-			onShow:function(parent, parentId, index){
-				this.node.hide();
-				this.backgroundColor.setProperty("display", "none");
+			onMount:function(parent, parentId, index){
+				this.hide();
+				//this.backgroundColor.setProperty("display", "none");
 			}.bind(this),
 			onReceive: onReceive.bind(this)
 		};
@@ -114,7 +121,7 @@ Meteor.startup(function(){
 	};
 	function onReceive(event, payload){
 		if(event ==="showMenu"){
-			this.node.show();
+			this.show();
 			this.opacity.set(1,{duration:200});
 			this.currentMagazin = payload.id;
 			showAppropriateMagazin.call(this);
@@ -126,18 +133,13 @@ Meteor.startup(function(){
 		if(event ===  "insideArticle"){
 			this.menus[this.currentMagazin].node.grids[this.currentArticle].grid.showElements();
 		}
+		if(event ==="openArticleContent"){
+			this.hide();
+		}
 	}
 
 
-	ArticleMenu.DEFAULT_PROPERTIES = {
-		footerSize:50
-	};
-    ArticleMenu.prototype.show = function show(){
-        this.node.show();
-    };
-    ArticleMenu.prototype.hide = function hide(){
-        this.node.hide();
-    };
+
 	function changeArticle(){
 		this.currentArticle += 1;
 		if(this.currentArticle >= this.data[this.currentMagazin].articles.length)
@@ -225,7 +227,7 @@ Meteor.startup(function(){
 		data.forEach(function(magazin, i){
 			var childForAlign = el.addChild();
 			var node = makeHexMenuElements.call(this, childForAlign, magazin);
-			
+
 			var box = new Box({
 	            mass: 100,
 	            size: [100,100,100]

@@ -142,6 +142,13 @@ Meteor.startup(function(){
 	}
 	function onReceive(event, payload){
 		var prefix = new Transitionable([1,1]);
+		if(event === 'changeMagazine'){
+			var newIndex = getNextIndex.call(this, payload.direction);
+            var oldIndex = this.currentMagazine;
+            if (oldIndex !== newIndex) {
+	            this.changeMagazine(oldIndex, newIndex);
+			}
+		}
 		if(event === "goInsideMagazine"){
 			this.opacity.set(0.2,{duration: 300}, function(){
 			//magazines[this.currentMagazine].opacity.set(0.7,{duration: 300}, function(){
@@ -241,8 +248,9 @@ Meteor.startup(function(){
 	}
 
 	function _callEvents(direction){
-		//this.emit('changeMagazine', {direction:direction});
-		Dispatch.e
+		this.emit('changeMagazine', {direction:direction});
+		// v0.6.2 Dispatch.dispatch("body",event)
+		//Dispatch.e
 	}
 
 	function _makeFooter(root){
@@ -261,17 +269,9 @@ Meteor.startup(function(){
 
 	function  _bindEvents(){
 		this.node.addComponent({
-			onReceive:function(e, payload){
-				if(e === 'changeMagazine'){
-					var newIndex = getNextIndex.call(this, payload.direction);
-		            var oldIndex = this.currentMagazine;
-		            if (oldIndex !== newIndex) {
-			            this.changeMagazine(oldIndex, newIndex);
-					}
-				}
-				onReceive.call(this, e, payload);
-			}.bind(this),
-			onShow: function(){
+			onReceive:onReceive.bind(this),
+			//onShow v0.6.2
+			onMount: function(){
     			this.changeMagazine(null, this.currentMagazine);
 			}.bind(this)
 		});

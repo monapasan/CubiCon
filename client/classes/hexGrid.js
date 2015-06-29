@@ -4,7 +4,7 @@ Meteor.startup(function(){
 	var DOMElement = Famous.DOMElement;
 	var Opacity =  Famous.Opacity;
 	var Transitionable = Famous.Transitionable;
-
+	var GestureHandler = Famous.GestureHandler;
 /*    var AMOUNT_ROW = 3;
     var AMOUNT_COLUMN = 3;
     var AMOUNT = AMOUNT_COLUMN * AMOUNT_ROW;
@@ -33,10 +33,10 @@ Meteor.startup(function(){
 
     HexGrid.prototype.show = function(){
         this.node.show();
-    }
+    };
     HexGrid.prototype.hide = function hide(){
         this.node.hide();
-    }
+    };
 	function createComponent(node,transitionable, i){
         var id  = node.addComponent({
             onUpdate: function(){
@@ -123,33 +123,21 @@ Meteor.startup(function(){
 		for(var i = 0; i < this.options.hexagonsAmount; i++){
 			data = this.data.sections[i];
 			cord = this.cord[data.position];
-			//console.log(cord);
 			hex = root.addChild().setSizeMode(0, 1)
 					.setProportionalSize(this.hexWidth, null)
 					.setAbsoluteSize(null, this.hexHeight)
-					//.setDifferentialSize(-46.66, -15)
 					.setAlign(cord.x, 0)
 					.setPosition(0, cord.y);
-			//el = new DOMElement(hex,{tagName: 'img'}).setAttribute('src', data.menuUrl);
 			el = new DOMElement(hex);
-			//el.setContent('<div class="hexrow"><div style="background: url(Mandarins.jpg); no-repeat center">' +
-			//	        '<span><h3>' + data.shortName.toUpperCase() + '</h3></span><div></div><div></div></div></div>');
-			// el.setContent(
-			// 	'<div class="hexrow">'+
-			// 		'<div style="background-image:url(img/Mandarins.jpg)">' +
-			// 			'<span>' + data.shortName.toUpperCase() + somePlace + '</span>' +
-			// 			'<div></div><div></div>' +
-			// 		'</div>' +
-			// 	'</div>'
-			// );
+
 			el.setContent(
 				'<svg version="1.1" viewBox="0 20 300 260" preserveAspectRatio="xMinYMin meet" class="svg-content">'+
 					'<defs>' +
 					    '<pattern id="image-bg' + this.currentArticle + i +'" x="0" y="0" height="100%" width="100%" patternUnits="objectBoundingBox">' +
 					      '<image preserveAspectRatio="xMidYMid slice" width="300" height="260" xlink:href="' + data.menuUrl + '" ></image>' +
 					    '</pattern>' +
-				  	'</defs>' + 
-					'<polygon class="svgHexagon" points="300,150 225,280 75,280 0,150 75,20 225,20" fill="url(#image-bg' + this.currentArticle + i +')"></polygon>' + 
+				  	'</defs>' +
+					'<polygon class="svgHexagon" points="300,150 225,280 75,280 0,150 75,20 225,20" fill="url(#image-bg' + this.currentArticle + i +')"></polygon>' +
 				'</svg>');
 			var text  = hex.addChild().setProportionalSize(0.7,0.5).setAlign(0.5, 0.6).setMountPoint(0.5, 0.5);
 			new DOMElement(text,{
@@ -157,6 +145,15 @@ Meteor.startup(function(){
 				classes:["text","hextext"],
 				content: data.shortName.toUpperCase()
 			});
+			//element to catch UIevents
+			hex.addChild().setProportionalSize(1,1);
+			var forUI = new DOMElement(hex,{
+				classes: ['hexForUI']
+			});
+			var gest = new GestureHandler(hex);
+			gest.on('tap', handleEvents.bind(this, i, this.data, data.type));
+
+			// opacity for animate appering
 			var opacityText = new Opacity(text);
 			var opacityHex = new Opacity(hex);
 			opacityHex.set(0,{duration: 10});
@@ -169,12 +166,20 @@ Meteor.startup(function(){
 			});
 		}
 	}
+	function handleEvents(number, data, type){
+		console.log(number, data);
+		this.emit('openArticleContent',{data: data, number:number,type:type});
+	}
+	HexGrid.prototype.emit = function emit(event, payload){
+		this.node.emit(event,payload);
+	};
+
 	HexGrid.prototype.setOptions = function setOptions(options, data){
 		if(!options) return;
 		if(options.currentArticle) this.options.currentArticle = options.currentArticle;
 		if(options.indent_y) this.options.indent_y = options.indent_y;
 		// adjusting for mobiles that have another aspect ratio than iphone 4
-		else if(screen.width / screen.height < 0.6) this.options.indent_y = (screen.width / screen.height) * 0.1; 
+		else if(screen.width / screen.height < 0.6) this.options.indent_y = (screen.width / screen.height) * 0.1;
 		if(options.margin_x) this.options.margin_x = options.margin_x;
 		if(options.rowAmount) this.options.rowAmount = options.rowAmount;
 		if(options.columnAmount) this.options.columnAmount = options.columnAmount;
