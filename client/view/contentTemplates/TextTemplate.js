@@ -8,14 +8,14 @@ Meteor.startup(function(){
 
 
 	function TextTemplate(node, data){
-		this.node = node;
+		this.node = node.addChild();
         this.data = getData.call(this, data);
 		setComponents.call(this,this.node);
 		createBg.call(this, this.node);
         createImgHeader.call(this,this.node);
 		createTitleWithLine.call(this, this.node);
 		createCore.call(this, this.node, this.data);
-        createFooter.call(this, this.node);
+        this.footer = createFooter.call(this, node);
     }
 
 
@@ -37,17 +37,45 @@ Meteor.startup(function(){
     }
 
 	function createBg(node){
-		new DOMElement(node,{
+		var bg = new DOMElement(node,{
 			properties:{
-				'background-color': '#f0f0f0'
+				'background-color': '#f0f0f0',
+				'overflow-y': 'scroll'
 			}
 		});
+		node.addUIEvent('scroll');
+		node.onReceive = handleScrollEvent.bind(this);
 	}
 
+		function handleScrollEvent(e, payload) {
+		if(e != 'scroll'){
+			return;
+		}
+		var cord = getScrollCord();
 
+		console.log(this.lastCord - cord);
+		if(this.footer.opacity.isActive()){
+			this.footer.opacity.halt();
+		}
+		if((this.lastCord - cord) >= 0){
+			this.footer.opacity.set(0,{duration:200});
+		}
+		else{
+			this.footer.opacity.set(1,{duration:200});
+		}
+		this.lastCord = cord;
+	}
+	function getScrollCord() {
+		var cord = _.first(document.getElementsByClassName('scroll'));
+		cord = cord.getBoundingClientRect().bottom;
+		return cord;
+	}
     function setComponents(){
         var comps = {
-            onReceive: onReceive.bind(this)
+            onReceive: onReceive.bind(this),
+			onShow: function(){
+				this.lastCord = getScrollCord();
+			}.bind(this)
         };
         this.node.addComponent(comps);
     }
@@ -60,7 +88,7 @@ Meteor.startup(function(){
         var header = node.addChild().setProportionalSize(1, 0.33);
         new DOMElement(header,{
             tagName: 'img',
-            classes: ['textTmpl','header'],
+            classes: ['textTmpl','header', 'scroll'],
         }).setAttribute('src', this.data.headerImg);
         var line = node.addChild()
                        .setSizeMode(0,1)
@@ -72,6 +100,13 @@ Meteor.startup(function(){
                'background-color': this.colorScheme
                }
            });
+		// maybe later. Set on header background opacity:
+		// new DOMElement(header.addChild().setProportionalSize(1, 1), {
+		// 	properties: {
+		// 		'background-color': this.colorScheme,
+		// 		'opacity': 0.5
+		// 		}
+		// 	});
     }
 
 	function createTitleWithLine(node) {
@@ -119,9 +154,13 @@ Meteor.startup(function(){
 			classes: ['textTmpl', 'close']
 		});
 		closeEl.setContent('<i class="fa fa-times"></i>');
-
+		var footerOpacity = new Opacity(footer);
 		var arrowRight = getArrow(footer, 1);
 		var arrowLeft = getArrow(footer);
+		return {
+			node: footer,
+			opacity: footerOpacity
+		};
 
     }
 

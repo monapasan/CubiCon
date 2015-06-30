@@ -14,8 +14,11 @@ Meteor.startup(function(){
 		this.currentPart = 0;
         setComponents.call(this,this.node);
         this.icons = createIcons.call(this, this.node);
-        this.audio = createAudioPlayer.call(this, this.node);
-        this.select(this.currentPart);
+		this.audio = createAudioPlayer.call(this, this.node);
+        this.text = createTextHolder.call(this, this.node);
+		this.speadReader = createSpeadReader.call(this, this.node);
+		this.parts = this.getParts.call(this);
+        this.init.call(this);
     }
     TextSwapper.prototype.DEFAULT_PROPERTIES = {
         spritz: true,
@@ -25,15 +28,31 @@ Meteor.startup(function(){
         margin: 100,
         colorScheme: 'white'
     };
+	TextSwapper.prototype.init = function () {
+		for (var i = 0; i < this.parts.length; i++) {
+			if(i !== this.currentPart)
+				this.deselect(i);
+			else this.select(i);
+		}
+	};
     TextSwapper.prototype.emit = function emit(event, payload) {
         this.node.emit(event, payload);
     };
     TextSwapper.prototype.select = function(i){
         this.icons[i].dom.setProperty('backgroundColor', this.options.colorScheme);
+		this.parts[i].node.show();
     };
     TextSwapper.prototype.deselect = function(i){
         this.icons[i].dom.setProperty('backgroundColor', "#080908");
+		this.parts[i].node.hide();
     };
+	TextSwapper.prototype.getParts = function(){
+		var result = [];
+		result.push(this.audio);
+		result.push(this.text);
+		result.push(this.speadReader);
+		return result;
+	};
     function setComponents(node) {
         var comp = {};
         node.addComponent(comp);
@@ -47,7 +66,8 @@ Meteor.startup(function(){
                             .setSizeMode(0,1)
                             .setAbsoluteSize(undefined, 100)
                             .setProportionalSize(0.8, undefined)
-                            .setAlign(0.1, 0);
+                            .setAlign(0.5, 0)
+							.setMountPoint(0.5, 0);
         for(; i < this.options.amount; i++){
             position = i * this.options.margin;
             iconNode = placeHolder.addChild()
@@ -71,6 +91,9 @@ Meteor.startup(function(){
     }
 
     function bindEvents(which, el){
+		if(which === this.currentPart){
+			return;
+		}
         this.deselect(this.currentPart);
         this.select(which);
         this.currentPart = which;
@@ -88,6 +111,17 @@ Meteor.startup(function(){
         var audioNode = node.addChild().setAlign(0, 0);
         return new App.AudioPlayer(audioNode, this.data, {colorScheme : this.options.colorScheme});
     }
+
+	function createTextHolder(node){
+		var textNode = node.addChild().setAlign(0, 0);
+        return new App.TextHolder(textNode, this.data, {colorScheme : this.options.colorScheme});
+	}
+
+	function createSpeadReader(node) {
+		var speedReadNode = node.addChild().setAlign(0, 0);
+		return new App.SpeadReader(speedReadNode, this.data, {colorScheme : this.options.colorScheme});
+
+	}
 
     App.TextSwapper = TextSwapper;
 });
