@@ -1,151 +1,201 @@
 Meteor.startup(function(){
+    //
+    // var SprayReader = function(container){
+    //   this.container = container;
+    // };
+    // SprayReader.prototype = {
+    //   wpm: null,
+    //   msPerWord: null,
+    //   wordIdx: null,
+    //   input: null,
+    //   words: null,
+    //   isRunning: false,
+    //   timers: [],
+    //
 
-    var SprayReader = function(container){
-      this.container = container;
-    };
-    SprayReader.prototype = {
-      wpm: null,
-      msPerWord: null,
-      wordIdx: null,
-      input: null,
-      words: null,
-      isRunning: false,
-      timers: [],
+function SpeedReader(selection, container){
 
-      setInput: function(input) {
-        this.input = input;
-
-        // Split on spaces
-        var allWords = input.split(/\s+/);
-
-        var word = '';
-        var result = '';
-
-        // Preprocess words
-        var tmpWords = allWords.slice(0); // copy Array
-        var t = 0;
-
-        for (var i=0; i<allWords.length; i++){
-
-          if(allWords[i].indexOf('.') != -1){
-            tmpWords[t] = allWords[i].replace('.', '•');
-          }
-
-          // Double up on long words and words with commas.
-          if((allWords[i].indexOf(',') != -1 || allWords[i].indexOf(':') != -1 || allWords[i].indexOf('-') != -1 || allWords[i].indexOf('(') != -1|| allWords[i].length > 8) && allWords[i].indexOf('.') == -1){
-            tmpWords.splice(t+1, 0, allWords[i]);
-            tmpWords.splice(t+1, 0, allWords[i]);
-            t++;
-            t++;
-          }
-
-          // Add an additional space after punctuation.
-          if(allWords[i].indexOf('.') != -1 || allWords[i].indexOf('!') != -1 || allWords[i].indexOf('?') != -1 || allWords[i].indexOf(':') != -1 || allWords[i].indexOf(';') != -1|| allWords[i].indexOf(')') != -1){
-            tmpWords.splice(t+1, 0, ".");
-            tmpWords.splice(t+1, 0, ".");
-            tmpWords.splice(t+1, 0, ".");
-            t++;
-            t++;
-            t++;
-          }
-
-          t++;
-        }
-
-        this.words = tmpWords.slice(0);
-        this.wordIdx = 0;
-      },
-
-      setWpm: function(wpm) {
-        this.wpm = parseInt(wpm, 10);
-        this.msPerWord = 60000/wpm;
-      },
-
-      start: function() {
-        this.isRunning = true;
-
-        thisObj = this;
-
-        this.timers.push(setInterval(function() {
-          thisObj.displayWordAndIncrement();
-        }, this.msPerWord));
-      },
-
-      stop: function() {
-        this.isRunning = false;
-
-        for(var i = 0; i < this.timers.length; i++) {
-          clearTimeout(this.timers[i]);
-        }
-      },
-
-      displayWordAndIncrement: function() {
-        var pivotedWord = pivot(this.words[this.wordIdx]);
-
-        this.container.setContent(pivotedWord);
-
-        this.wordIdx++;
-        if (thisObj.wordIdx >= thisObj.words.length) {
-          this.wordIdx = 0;
-          this.stop();
-        }
-      }
-    };
-
-    // Find the red-character of the current word.
-    function pivot(word){
-        var length = word.length, start ='', end = '', result, tail, bit;
-
-        // Longer words are "right-weighted" for easier readability.
-        if(length<6){
-
-            bit = 1;
-            while(word.length < 22){
-                if(bit > 0){
-                    word = word + '.';
-                }
-                else{
-                    word = '.' + word;
-                }
-                bit = bit * -1;
-            }
-            if((length % 2) === 0){
-                start = word.slice(0, word.length/2);
-                end = word.slice(word.length/2, word.length);
-            } else{
-                start = word.slice(0, word.length/2);
-                end = word.slice(word.length/2, word.length);
-            }
-
-            result = "<span class='spray_start'>" + start.slice(0, start.length -1);
-            result = result + "</span><span class='spray_pivot'>";
-            result = result + start.slice(start.length-1, start.length);
-            result = result + "</span><span class='spray_end'>";
-            result = result + end;
-            result = result + "</span>";
-        }
-
-        else{
-
-            tail = 22 - (word.length + 7);
-            tail = tail < 0 ? 0 : tail;
-            word = '.......' + word + ('.'.repeat(tail));
-
-            start = word.slice(0, word.length/2);
-            end = word.slice(word.length/2, word.length);
-
-            result = "<span class='spray_start'>" + start.slice(0, start.length -1);
-            result = result + "</span><span class='spray_pivot'>";
-            result = result + start.slice(start.length-1, start.length);
-            result = result + "</span><span class='spray_end'>";
-            result = result + end;
-            result = result + "</span>";
-
-        }
-
-        result = result.replace(/\./g, "<span class='invisible'>.</span>");
-
-        return result;
+    this.container = container;
+    clearTimeouts();
+    if(selection){
+        this.spritzify.call(this, selection);
     }
-    window.SprayReader = SprayReader;
+}
+
+SpeedReader.prototype.setWpm = function setWpm(wpm){
+    this.wpm = wpm;
+};
+// The meat!
+SpeedReader.prototype.spritzify = function spritzify(input){
+
+    //this.wpm = parseInt(document.getElementById("spritz_selector").value, 10);
+
+    // Split on any spaces.
+    var all_words = input.split(/\s+/);
+
+    // The reader won't stop if the selection starts or ends with spaces
+    if (all_words[0] === "")
+    {
+        all_words = all_words.slice(1, all_words.length);
+    }
+
+    if (all_words[all_words.length - 1] === "")
+    {
+        all_words = all_words.slice(0, all_words.length - 1);
+    }
+
+    var word = '';
+    var result = '';
+
+    // Preprocess words
+    var temp_words = all_words.slice(0); // copy Array
+    var t = 0;
+
+    for (var i=0; i<all_words.length; i++){
+
+        if(all_words[i].indexOf('.') != -1){
+            temp_words[t] = all_words[i].replace('.', '&#8226;');
+        }
+
+        // Double up on long words and words with commas.
+        // if((all_words[i].indexOf(',') != -1 || all_words[i].indexOf(':') != -1 || all_words[i].indexOf('-') != -1 || all_words[i].indexOf('(') != -1|| all_words[i].length > 8) && all_words[i].indexOf('.') == -1){
+        //     temp_words.splice(t+1, 0, all_words[i]);
+        //     temp_words.splice(t+1, 0, all_words[i]);
+        //     t++;
+        //     t++;
+        // }
+
+        // Add an additional space after punctuation.
+        if(all_words[i].indexOf('.') != -1 || all_words[i].indexOf('!') != -1 || all_words[i].indexOf('?') != -1 || all_words[i].indexOf(':') != -1 || all_words[i].indexOf(';') != -1|| all_words[i].indexOf(')') != -1){
+            temp_words.splice(t+1, 0, " ");
+            temp_words.splice(t+1, 0, " ");
+            temp_words.splice(t+1, 0, " ");
+            t++;
+            t++;
+            t++;
+        }
+
+        t++;
+
+    }
+
+    all_words = temp_words.slice(0);
+    this.all_words = all_words;
+    this.currentWord = 0;
+    this.running = false;
+    this.spritz_timers = [];
+
+
+};
+
+SpeedReader.prototype.updateValues = function updateValues(i) {
+
+    var p = pivot(this.all_words[i]);
+    //document.getElementById("spritz_result").innerHTML = p;
+    this.container.setContent(p);
+    this.currentWord = i;
+
+};
+
+SpeedReader.prototype.startSpritz = function startSpritz() {
+    this.ms_per_word = 60000/this.wpm;
+    this.running = true;
+    this.spritz_timers.push(setInterval(function() {
+        this.updateValues.call(this, this.currentWord);
+        this.currentWord++;
+        if(this.currentWord >= this.all_words.length) {
+            this.currentWord = 0;
+            this.stopSpritz();
+        }
+    }.bind(this),this.ms_per_word));
+};
+SpeedReader.prototype.stopSpritz = function stopSpritz() {
+    for(var i = 0; i < this.spritz_timers.length; i++) {
+        clearTimeout(this.spritz_timers[i]);
+    }
+    this.running = false;
+};
+
+// Find the red-character of the current word.
+function pivot(word){
+    var length = word.length;
+
+    var bestLetter = 1;
+    switch (length) {
+        case 1:
+            bestLetter = 1; // first
+            break;
+        case 2:
+        case 3:
+        case 4:
+        case 5:
+            bestLetter = 2; // second
+            break;
+        case 6:
+        case 7:
+        case 8:
+        case 9:
+            bestLetter = 3; // third
+            break;
+        case 10:
+        case 11:
+        case 12:
+        case 13:
+            bestLetter = 4; // fourth
+            break;
+        default:
+            bestLetter = 5; // fifth
+    }
+
+    word = decodeEntities(word);
+    var start = '.'.repeat((8-bestLetter) < 0 ? 0 : (8-bestLetter) ) + word.slice(0, bestLetter-1).replace('.', '&#8226;');
+    var middle = word.slice(bestLetter-1,bestLetter).replace('.', '&#8226;');
+    var end = word.slice(bestLetter, length).replace('.', '&#8226;') + '.'.repeat((8-(word.length-bestLetter)) < 0 ? 0 : (8-(word.length-bestLetter)));
+
+    var result;
+    result = "<span class='spritz_start'>" + start;
+    result = result + "</span><span class='spritz_pivot'>";
+    result = result + middle;
+    result = result + "</span><span class='spritz_end'>";
+    result = result + end;
+    result = result + "</span>";
+
+    result = result.replace(/\./g, "<span class='invisible'>.</span>");
+
+    return result;
+}
+
+
+
+//////
+// Helpers
+//////
+
+// This is a hack using the fact that browers sequentially id the timers.
+function clearTimeouts(){
+    var id = window.setTimeout(function() {}, 0);
+
+    while (id--) {
+        window.clearTimeout(id);
+    }
+}
+
+function decodeEntities(s){
+    var str, temp= document.createElement('p');
+    temp.innerHTML= s;
+    str= temp.textContent || temp.innerText;
+    temp=null;
+    return str;
+}
+
+// Let strings repeat themselves,
+// because JavaScript isn't as awesome as Python.
+// String.prototype.repeat = function( num ){
+//     if(num < 1){
+//         return new Array( Math.abs(num) + 1 ).join( this );
+//     }
+//     return new Array( num + 1 ).join( this );
+// };
+
+    window.SpeedReader = SpeedReader;
 });

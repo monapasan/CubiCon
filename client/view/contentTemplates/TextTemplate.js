@@ -16,6 +16,7 @@ Meteor.startup(function(){
 		createTitleWithLine.call(this, this.node);
 		createCore.call(this, this.node, this.data);
         this.footer = createFooter.call(this, node);
+		this.lastCord =100;
     }
 
 
@@ -58,9 +59,12 @@ Meteor.startup(function(){
 			this.footer.opacity.halt();
 		}
 		if((this.lastCord - cord) >= 0){
-			this.footer.opacity.set(0,{duration:200});
+			this.footer.opacity.set(0,{duration:200},function(){
+				this.footer.node.hide();
+			}.bind(this));
 		}
 		else{
+			if(!this.footer.node.isShown()) this.footer.node.show();
 			this.footer.opacity.set(1,{duration:200});
 		}
 		this.lastCord = cord;
@@ -73,6 +77,7 @@ Meteor.startup(function(){
     function setComponents(){
         var comps = {
             onReceive: onReceive.bind(this),
+			//v0.6.2 onShow
 			onShow: function(){
 				this.lastCord = getScrollCord();
 			}.bind(this)
