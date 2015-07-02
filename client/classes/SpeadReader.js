@@ -11,45 +11,57 @@ Meteor.startup(function(){
 		this.node = node;
         this.data = data;
         this.options = _.extend(this.DEFAULT_PROPERTIES, options);
-		this.text = createSpeadReader.call(this, this.node);
+		this.speadReader = createSpeadReader.call(this, this.node);
 		this.wpmBox = createWpmBox.call(this, this.node);
 		this.play = createPlayButton.call(this, this.node);
 		this.pause = createPauseButton.call(this, this.node);
 		this.wpm = this.options.startWpmValue;
+		this.wpmDropboxValue = 0;
 		this.dropMenu = createWpmDromMenu.call(this, this.wpmBox);
 		this.isDropMenuShown = false;
-		hideDropMenu.call(this);
+		setComponents.call(this, this.node);
     }
 	function createWpmBox(node){
 		var box = node.addChild()
 						.setSizeMode(1,1)
 						.setAlign(0.2,0.3)
 						.setAbsoluteSize(90, 35);
-		var el = new DOMElement(box,{
+		var dom = new DOMElement(box,{
 			classes:['wpmBox', 'withBorder'],
-			content:  this.options.startWpmValue + 'wpm'
+			content:  this.options.startWpmValue + ' wpm'
 		});
 		var gest = new GestureHandler(box);
-		gest.on('tap', showWmpValues.bind(this, box, el));
+		gest.on('tap', showWmpValues.bind(this, box, dom));
 		return {
 			node: box,
-			el: el
+			dom: dom
 		};
 	}
-
+	function setComponents(node) {
+		var comp  = {
+			onShow: function(){
+				setTimeout(hideDropMenu.bind(this), 10);
+			}.bind(this)
+		};
+		node.addComponent(comp);
+	}
 	function createWpmDromMenu(wpmBox) {
-		var result = [], i = this.options.startWpmValue + 50;
-		var str = '<ul>', node,q = 0, gest;
+		var result = [], i = this.options.startWpmValue;
+		var str = '<ul>', node,q = 0, gest, dom;
 		var box = wpmBox.node;
 		for(; i <= this.options.endWpmValue; i += 50, q++){
-			result[q]  = box.addChild().setPosition(-2, 35 * (q + 1));
-			new DOMElement(result[q],{
+			node  = box.addChild().setPosition(-2, 35 * (q + 1));
+			dom = new DOMElement(node,{
 				classes: ['wpmBox'],
-				content: i + 'wpm'
+				content: i + ' wpm'
 			});
-			result[q].hide();
-			gest = new GestureHandler(result[q]);
-			gest.on('tap', chooseSpeed.bind(this, q, i));
+			gest = new GestureHandler(node);
+			gest.on('tap', chooseSpeed.bind(this, i, q));
+			if(i === this.wpm) dom.setProperty('opacity', '0.6');
+			result[q] = {
+				node: node,
+				dom: dom
+			};
 		}
 		return result;
 	}
@@ -57,21 +69,22 @@ Meteor.startup(function(){
 	function showWmpValues() {
 		if(this.isDropMenuShown){
 			this.isDropMenuShown = false;
-			console.log(this.isDropMenuShown);
-			return;
+			chooseSpeed.call(this, this.wpm, this.wpmDropboxValue);
+			return void 0;
 		}
+		this.wpmBox.dom.addClass('ifCollapsed');
 		this.dropMenu.forEach(function(item){
-			item.show();
+			item.node.show();
 		});
 		this.isDropMenuShown = true;
 	}
-	function chooseSpeed(number, wpm) {
-		this.setWpm.call(this, wpm);
-		hideDropMenu.call(this, wpm);
+	function chooseSpeed(wpm, number) {
+		this.selectWpmValue.call(this, wpm, number);
+		hideDropMenu.call(this);
 	}
 	function hideDropMenu(){
 		this.dropMenu.forEach(function(el){
-			if(el.isShown())el.hide();
+			el.node.hide();
 		});
 	}
 
@@ -87,6 +100,15 @@ Meteor.startup(function(){
 			classes: ['speedReader']
         });
         this.sprayReader = new SpeedReader(this.data.text, el);
+		new DOMElement(sr.addChild().setPosition(65,-20),{
+			content: "▼",
+			classes: ['arrow']
+		});
+		new DOMElement(sr.addChild().setPosition(65,20),{
+			content: "▲",
+			classes: ['arrow']
+		});
+		return sr;
 	}
 
 	function createPauseButton(node){
@@ -142,6 +164,17 @@ Meteor.startup(function(){
 
 	SpeadReader.prototype.setWpm = function(wpm){
 		this.wpm = wpm;
+	};
+
+	SpeadReader.prototype.selectWpmValue = function(wpm, q){
+		this.wpmBox.dom.setContent(wpm + ' wpm');
+		this.wpmBox.dom.removeClass('ifCollapsed');
+		this.dropMenu.forEach(function(item, i){
+			if(q === i) item.dom.setProperty('opacity', '0.6');
+			else item.dom.setProperty('opacity', '1');
+		}.bind(this));
+		this.wpmDropboxValue = q;
+		this.setWpm(wpm);
 	};
 	SpeadReader.prototype.selectPlay = function () {
 		this.play.dom.setProperty('color', this.options.colorScheme);

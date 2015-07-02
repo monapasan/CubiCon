@@ -1,7 +1,7 @@
 data  = Magazines.find().fetch();
 Template.main.rendered = function() {
  	if (screenfull.enabled) {
-        screenfull.request();
+             //screenfull.request();
     }
     else{
     	window.scrollTo(0,1);
@@ -9,7 +9,7 @@ Template.main.rendered = function() {
     var scene;
     Famous.FamousEngine.init();
     scene = Famous.FamousEngine.createScene();
-    new App.FoxyHexagon(scene.addChild(), this.data)
+    new App.FoxyHexagon(scene.addChild(), this.data);
 
 };
 

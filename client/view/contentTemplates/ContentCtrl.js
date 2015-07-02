@@ -15,12 +15,15 @@ Meteor.startup(function(){
 	ContentCtrl.prototype.show = function show() {
 		this.node.show();
 	};
+	
 	ContentCtrl.prototype.hide = function hide() {
 		this.node.hide();
 	};
+	
 	ContentCtrl.prototype.emit = function emit(event, payload) {
 		this.node.emit(event, payload);
 	};
+	
 	function setComponents(node){
 		var components = {
 			onMount:this.hide(),
@@ -38,7 +41,10 @@ Meteor.startup(function(){
 
 	function openContent(payload){
 		if(payload.type === "text"){
-			new App.TextTemplate(this.node,payload.data);
+			new App.TextTemplate(this.node, payload.data);
+		}
+		if(payload.type === 'video'){
+			new App.VideoTemplate(this.node, payload.data);
 		}
 	}
 

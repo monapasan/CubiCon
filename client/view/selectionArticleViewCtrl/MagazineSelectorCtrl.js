@@ -43,6 +43,7 @@ Meteor.startup(function(){
 		this.force = new Vec3();
 		FamousEngine.requestUpdate(this.updater);
 		this.opacity = new Opacity(this.node);
+		//this.fullScreenElement = createFullscreenElement.call(this, this.node);
 	}
 
 	MagazineSelectorCtrl.prototype.constructor = MagazineSelectorCtrl;
@@ -81,6 +82,23 @@ Meteor.startup(function(){
         };
         return resizeComponent;
     }
+	function createFullscreenElement(node){
+		var fullNode = node.addChild().setSizeMode(1,1).setAbsoluteSize(100, 100);
+		new DOMElement(fullNode,{
+			content: 'Enable Full Screen mode',
+			id: 'fullNode',
+			properties: {
+				'background-color': '#8b9dc4'
+			}
+		});
+		// fullNode.addUIEvent('touchstart');
+		// fullNode.onReceive = function(e){
+		// 	if(e =='touchstart'){
+		// 		screenfull.request();
+		// 	}
+		// };
+
+	}
 
 	function onUpdate(time) {
 	    this.simulation.update(time);
@@ -99,7 +117,7 @@ Meteor.startup(function(){
 	        // Set the `imageNode`'s x-position to the `Box` body's x-position
 	        page.body.node.setPosition(0, yPos, 0);
 
-	
+
 	    }
 
 	    FamousEngine.requestUpdateOnNextTick(this.updater);
@@ -118,7 +136,7 @@ Meteor.startup(function(){
   //       	position.set(0, currentPosition + delta);
   //       else
   //       	position.set(0, DISPLACEMENT_LIMIT);
-        
+
   //       if (currentPosition + delta < -DISPLACEMENT_PEEK)
   //       	position.set(0, -DISPLACEMENT_PEEK);
   //       if(e.status ==='end'){
@@ -228,7 +246,7 @@ Meteor.startup(function(){
         if (e.status === 'start') {
             this.draggedIndex = index;
         }
-	} 
+	}
 
 	function _makeHeader(root) {
 
@@ -273,9 +291,23 @@ Meteor.startup(function(){
 			//onShow v0.6.2
 			onMount: function(){
     			this.changeMagazine(null, this.currentMagazine);
+				//setTimeout(requestFullscrenFunction.bind(this),10);
 			}.bind(this)
 		});
 	}
+
+    function requestFullscrenFunction() {
+        // var el = document.getElementsByClassName('transparentNode')[0];
+        // el.onclick = function(){
+        //     screenfull.request();
+        // };
+        // el.addEventListener('touchmove', function(event) {
+        //     screenfull.request();
+        // }, false);
+		document.getElementById("fullNode").onclick = function(){
+			screenfull.request();
+		};
+    }
 
 	function getNextIndex(direction){
 		if(!direction){
@@ -302,7 +334,7 @@ Meteor.startup(function(){
 		if (from < to) {
 	        this.magazines[from].anchor.set(0, -1, 0);
 	        this.magazines[to].anchor.set(0, 0, 0);
-	    } 
+	    }
 	    else if(from > to){
 	        this.magazines[from].anchor.set(0, 1, 0);
 	        this.magazines[to].anchor.set(0, 0, 0);

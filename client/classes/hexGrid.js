@@ -119,7 +119,7 @@ Meteor.startup(function(){
     }
 	function _makeHexagons(root){
 		this.hexs = [];
-		var hex, coord,el;
+		var hex, coord,el, data;
 		for(var i = 0; i < this.options.hexagonsAmount; i++){
 			data = this.data.sections[i];
 			cord = this.cord[data.position];

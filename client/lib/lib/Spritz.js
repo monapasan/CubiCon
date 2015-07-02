@@ -144,13 +144,13 @@ function pivot(word){
             bestLetter = 4; // fourth
             break;
         default:
-            bestLetter = 5; // fifth
+            bestLetter = 4; // fifth
     }
 
     word = decodeEntities(word);
-    var start = '.'.repeat((8-bestLetter) < 0 ? 0 : (8-bestLetter) ) + word.slice(0, bestLetter-1).replace('.', '&#8226;');
+    var start = '.'.repeat((7-bestLetter) < 0 ? 0 : (7-bestLetter) ) + word.slice(0, bestLetter-1).replace('.', '&#8226;');
     var middle = word.slice(bestLetter-1,bestLetter).replace('.', '&#8226;');
-    var end = word.slice(bestLetter, length).replace('.', '&#8226;') + '.'.repeat((8-(word.length-bestLetter)) < 0 ? 0 : (8-(word.length-bestLetter)));
+    var end = word.slice(bestLetter, length).replace('.', '&#8226;') + '.'.repeat((7-(word.length-bestLetter)) < 0 ? 0 : (7-(word.length-bestLetter)));
 
     var result;
     result = "<span class='spritz_start'>" + start;

@@ -16,7 +16,7 @@ Meteor.startup(function(){
 		createTitleWithLine.call(this, this.node);
 		createCore.call(this, this.node, this.data);
         this.footer = createFooter.call(this, node);
-		this.lastCord =100;
+		this.lastCord = 100;
     }
 
 
@@ -31,10 +31,10 @@ Meteor.startup(function(){
     };
     function getData(data) {
         this.colorScheme = data.colorScheme;
-        data = _.filter(data.sections,function(section){
+        var newData = _.filter(data.sections,function(section){
             return section.type ==="text";
         });
-        return _.first(data).content;
+        return _.first(newData).content;
     }
 
 	function createBg(node){
@@ -54,7 +54,6 @@ Meteor.startup(function(){
 		}
 		var cord = getScrollCord();
 
-		console.log(this.lastCord - cord);
 		if(this.footer.opacity.isActive()){
 			this.footer.opacity.halt();
 		}

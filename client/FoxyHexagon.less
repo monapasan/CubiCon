@@ -5,8 +5,20 @@
 }
 @font-face {
 	font-family: 'PT Sans Regular Regular';
-	src: url("PT_Sans-Web-Regular.ttf") format("truetype");
+	src: url("fonts/PT Sans/PT_Sans-Web-Regular.ttf") format("truetype");
 }
+@font-face {
+    font-family: 'droid_sans_monoregular';
+    src: url('fonts/Droidsansmono/DroidSansMono-webfont.eot');
+    src: url('fonts/Droidsansmono/DroidSansMono-webfont.eot?#iefix') format('embedded-opentype'),
+         url('fonts/Droidsansmono/DroidSansMono-webfont.woff') format('woff'),
+         url('fonts/Droidsansmono/DroidSansMono-webfont.ttf') format('truetype'),
+         url('fonts/Droidsansmono/DroidSansMono-webfont.svg#droid_sans_monoregular') format('svg');
+    font-weight: normal;
+    font-style: normal;
+
+}
+
 .arrowDown {
 	background: url('icons/arrowNavDown.png') no-repeat center;
 }
@@ -119,38 +131,50 @@
 	font-family: BebasNeue;
 	line-height: 35px;
 	text-align: center;
-	font-size: 20px;
+	font-size: 4.5vh;;
 	border-right: 2px solid black;
 	border-left: 2px solid black;
+	&.selected{
+		opacity: 0.6;
+	}
+	&.withBorder.ifCollapsed{
+		border-bottom-width: 0px;
+		padding-bottom: 8vh;
+	}
 	&.withBorder{
 		border: 2px solid black;
 	}
 	&:last-of-type{
-		margin-bottom: 20px;
+		margin-bottom: 4.5vh;
 		border-bottom: 2px solid black;
 	}
 }
 // spritz
-.invisible{
-    color: white;
-}
 
 
 .speedReader{
 	background-color: white;
-	text-align: center;
+	text-align: left;
 	box-shadow:2px 2px 10px 10px #C9C9C9;
 	-webkit-box-shadow:2px 2px 10px 10px #C9C9C9;
 	-moz-box-shadow:2px 2px 10px 10px #C9C9C9;
 	line-height: 50px;
-	font-family: 'Droid Sans Mono', sans-serif;
-	font-size: 20px;
+	font-family: 'droid_sans_monoregular', sans-serif;
+	font-size: 4vh;
 	overflow: hidden;
+	.arrow{
+		color: #989898
+	}
 	.spritz_start{
 	    color: #333333;
 	}
 	.spritz_pivot{
 	    color: #DE0000;
+	}
+	.invisible{
+	    color: white;
+		position: static;
+		visibility: hidden;
 	}
 	.spritz_end{
 	    color: #333333;
