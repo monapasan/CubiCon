@@ -120,7 +120,6 @@ Meteor.startup(function(){
 	function createSpeadReader(node) {
 		var speedReadNode = node.addChild().setAlign(0, 0);
 		return new App.SpeadReader(speedReadNode, this.data, {colorScheme : this.options.colorScheme});
-
 	}
 
     App.TextSwapper = TextSwapper;

@@ -16,7 +16,7 @@ Meteor.startup(function(){
 		this.amountArticles = this.data.articles.length;
 		this.grids = _makeHexGrids.call(this);
 		this.descriptions = _makeArticleDesc.call(this);
-	
+
 	}
     HexMenu.prototype = Object.create(Object.prototype);
 
@@ -36,6 +36,10 @@ Meteor.startup(function(){
     HexMenu.prototype.hide = function hide(){
         this.node.hide();
     };
+
+	HexMenu.prototype.emit = function emit(e,payload){
+		this.node.emit(e, payload);
+	};
 
 
 
@@ -78,6 +82,7 @@ Meteor.startup(function(){
 			this.descriptionsParent.hide();
 			//this.showAppropriateHexagonMenu();
 		}
+
 		// if(event === 'showArticleBody'){
 		// 	this.doControlView(payload.currentMagazin);
 		// }

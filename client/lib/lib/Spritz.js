@@ -13,17 +13,28 @@ Meteor.startup(function(){
     //   timers: [],
     //
 
-function SpeedReader(selection, container){
-
-    this.container = container;
+function SpeedReader(options){
+    this.intro = "Article starting in Five. Four. Three. Two. One. ";
+    _.extend(this, options);
+    // this.container = container;
+    // this.onEnd = onEnd;
     clearTimeouts();
-    if(selection){
-        this.spritzify.call(this, selection);
-    }
+    var text_content;
+    if(this.selection)
+        this.setSelection.call(this,this.selection);
 }
 
 SpeedReader.prototype.setWpm = function setWpm(wpm){
     this.wpm = wpm;
+};
+
+SpeedReader.prototype.setSelection = function setSelection(selection, intro) {
+    if(intro) this.intro = intro;
+    text_content = this.intro + selection;
+    text_content = text_content.replace(/\./g, '. '); // Make sure punctuation is apprpriately spaced.
+    text_content = text_content.replace(/\?/g, '? ');
+    text_content = text_content.replace(/\!/g, '! ');
+    this.spritzify.call(this, text_content);
 };
 // The meat!
 SpeedReader.prototype.spritzify = function spritzify(input){
@@ -106,6 +117,7 @@ SpeedReader.prototype.startSpritz = function startSpritz() {
         if(this.currentWord >= this.all_words.length) {
             this.currentWord = 0;
             this.stopSpritz();
+            if(this.onEnd) this.onEnd();
         }
     }.bind(this),this.ms_per_word));
 };

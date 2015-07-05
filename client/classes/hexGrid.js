@@ -168,7 +168,7 @@ Meteor.startup(function(){
 	}
 	function handleEvents(number, data, type){
 		console.log(number, data);
-		this.emit('openArticleContent',{data: data, number:number,type:type});
+		this.emit('closeHexGrid',{data: data, number:number,type:type, articleNumber: this.currentArticle});
 	}
 	HexGrid.prototype.emit = function emit(event, payload){
 		this.node.emit(event,payload);

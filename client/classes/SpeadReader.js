@@ -40,7 +40,11 @@ Meteor.startup(function(){
 	function setComponents(node) {
 		var comp  = {
 			onShow: function(){
-				setTimeout(hideDropMenu.bind(this), 10);
+				setTimeout(this.hideDropMenu.bind(this), 10);
+				// this.hideDropMenu.call(this);
+			}.bind(this),
+			onMount:function(){
+				this.hideDropMenu.call(this);
 			}.bind(this)
 		};
 		node.addComponent(comp);
@@ -80,13 +84,9 @@ Meteor.startup(function(){
 	}
 	function chooseSpeed(wpm, number) {
 		this.selectWpmValue.call(this, wpm, number);
-		hideDropMenu.call(this);
+		this.hideDropMenu.call(this);
 	}
-	function hideDropMenu(){
-		this.dropMenu.forEach(function(el){
-			el.node.hide();
-		});
-	}
+
 
 	function createSpeadReader(node) {
         var sr = node.addChild()
@@ -96,10 +96,17 @@ Meteor.startup(function(){
 					.setMountPoint(0.5,0)
 					.setProportionalSize(0.8);
         var el = new DOMElement(sr,{
-            content:'Interne<span class="spritz_pivot">t</span>suchtige',
+            content:'<span class="invisible">..</span> Sta<span class="spritz_pivot">r</span>t',
 			classes: ['speedReader']
         });
-        this.sprayReader = new SpeedReader(this.data.text, el);
+		var selection = this.data ? this.data.text : undefined;
+		var options = {
+			selection:selection,
+			container: el,
+			intro: this.options.intro,
+			onEnd: this.selectPause.bind(this)
+		};
+        this.sprayReader = new SpeedReader(options);
 		new DOMElement(sr.addChild().setPosition(65,-20),{
 			content: "▼",
 			classes: ['arrow']
@@ -123,16 +130,12 @@ Meteor.startup(function(){
 			content: '<i class="fa fa-pause"></i>'
 		});
 		var gest = new GestureHandler(pauseButton);
-		gest.on('tap', bindPauseEvent.bind(this));
+		gest.on('tap', this.stop.bind(this));
 		return {
 			button: pauseButton,
 			dom: pauseEl,
 			gest: gest
 		};
-	}
-	function bindPauseEvent() {
-		this.sprayReader.stopSpritz();
-		this.selectPause.call(this);
 	}
 	function createPlayButton(node){
 		var playButton = node.addChild()
@@ -146,7 +149,7 @@ Meteor.startup(function(){
 			content: '<i class="fa fa-play"></i>'
 		});
 		var gest = new GestureHandler(playButton);
-		gest.on('tap', bindPlayEvent.bind(this));
+		gest.on('tap', this.play.bind(this));
 		return {
 			button: playButton,
 			dom: playEl,
@@ -154,13 +157,22 @@ Meteor.startup(function(){
 		};
 	}
 
-	function bindPlayEvent() {
+	SpeadReader.prototype.play = function play(){
 		if(!this.sprayReader.running){
 			this.sprayReader.setWpm(this.wpm);
-			this.sprayReader.startSpritz();
 			this.selectPlay.call(this);
+			this.sprayReader.startSpritz();
 		}
-	}
+	};
+
+	SpeadReader.prototype.stop = function(){
+		this.sprayReader.stopSpritz();
+		this.selectPause.call(this);
+	};
+
+	SpeadReader.prototype.setSelection = function setSelection(selection, intro) {
+		this.sprayReader.setSelection(selection, intro);
+	};
 
 	SpeadReader.prototype.setWpm = function(wpm){
 		this.wpm = wpm;
@@ -186,11 +198,22 @@ Meteor.startup(function(){
 		this.pause.dom.setProperty('color', this.options.colorScheme);
 	};
 
+	SpeadReader.prototype.hideDropMenu = function(){
+		this.dropMenu.forEach(function(el){
+			el.node.hide();
+		});
+	};
+
+	SpeadReader.prototype.isRunning = function(){
+		return this.sprayReader.running;
+	};
+
     SpeadReader.prototype.DEFAULT_PROPERTIES = {
         margin: 25,
 		startWpmValue:250,
 		endWpmValue: 400,
-        colorScheme: 'white'
+        colorScheme: 'white',
+		intro: undefined
     };
     App.SpeadReader = SpeadReader;
 });

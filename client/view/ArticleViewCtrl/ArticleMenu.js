@@ -56,6 +56,10 @@ Meteor.startup(function(){
     ArticleMenu.prototype.hide = function hide(){
         this.node.hide();
     };
+
+	ArticleMenu.prototype.emit = function emit(e,payload){
+		this.node.emit(e, payload);
+	};
 	function setComponents(node){
 		//onShow v0.6.2
 		var component = {
@@ -124,6 +128,7 @@ Meteor.startup(function(){
 			this.show();
 			this.opacity.set(1,{duration:200});
 			this.currentMagazin = payload.id;
+			this.currentArticle = payload.articleNumber ? payload.articleNumber : this.currentArticle;
 			showAppropriateMagazin.call(this);
 			this.changeDescription();
 		}
@@ -135,6 +140,10 @@ Meteor.startup(function(){
 		}
 		if(event ==="openArticleContent"){
 			this.hide();
+		}
+		if(event === 'closeHexGrid'){
+			payload.currentMagazin = this.currentMagazin;
+			this.emit('openArticleContent', payload);
 		}
 	}
 

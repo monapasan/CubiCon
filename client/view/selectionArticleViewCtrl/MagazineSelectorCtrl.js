@@ -43,7 +43,7 @@ Meteor.startup(function(){
 		this.force = new Vec3();
 		FamousEngine.requestUpdate(this.updater);
 		this.opacity = new Opacity(this.node);
-		//this.fullScreenElement = createFullscreenElement.call(this, this.node);
+		this.fullScreenElement = createFullscreenElement.call(this, this.node);
 	}
 
 	MagazineSelectorCtrl.prototype.constructor = MagazineSelectorCtrl;
@@ -83,14 +83,16 @@ Meteor.startup(function(){
         return resizeComponent;
     }
 	function createFullscreenElement(node){
-		var fullNode = node.addChild().setSizeMode(1,1).setAbsoluteSize(100, 100);
+		var fullNode = node.addChild().setSizeMode(1,1).setAbsoluteSize(65, 30);
 		new DOMElement(fullNode,{
-			content: 'Enable Full Screen mode',
+			content: 'Touch it !',
 			id: 'fullNode',
 			properties: {
-				'background-color': '#8b9dc4'
+				'background-color': '#8b9dc4',
+				'z-index': 100
 			}
 		});
+		return fullNode;
 		// fullNode.addUIEvent('touchstart');
 		// fullNode.onReceive = function(e){
 		// 	if(e =='touchstart'){
@@ -291,22 +293,21 @@ Meteor.startup(function(){
 			//onShow v0.6.2
 			onMount: function(){
     			this.changeMagazine(null, this.currentMagazine);
-				//setTimeout(requestFullscrenFunction.bind(this),10);
+				setTimeout(requestFullscrenFunction.bind(this),100);
 			}.bind(this)
 		});
 	}
 
     function requestFullscrenFunction() {
-        // var el = document.getElementsByClassName('transparentNode')[0];
-        // el.onclick = function(){
-        //     screenfull.request();
-        // };
-        // el.addEventListener('touchmove', function(event) {
-        //     screenfull.request();
-        // }, false);
+        var el = document.getElementById('fullNode');
+        el.addEventListener('touchstart', function(event) {
+            screenfull.request();
+			this.fullScreenElement.hide();
+        }.bind(this), false);
 		document.getElementById("fullNode").onclick = function(){
 			screenfull.request();
-		};
+			this.fullScreenElement.hide();
+		}.bind(this);
     }
 
 	function getNextIndex(direction){

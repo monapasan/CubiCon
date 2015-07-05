@@ -8,14 +8,14 @@ Meteor.startup(function(){
 
 
 	function DefaultTemplate(node, data, options){
-		this.node = node.addChild();
+		this.node = node;
         this.options = _.extend(this.DEFAULT_PROPERTIES, options);
         this.data = getData.call(this, data);
 		setComponents.call(this,this.node);
 		createBg.call(this, this.node);
         createImgHeader.call(this,this.node);
 		createTitleWithLine.call(this, this.node);
-        this.footer = createFooter.call(this, node);
+        this.footer = createFooter.call(this, this.node.getParent());
 		this.lastCord = 100;
     }
 
@@ -56,7 +56,7 @@ Meteor.startup(function(){
 		if(e != 'scroll'){
 			return;
 		}
-		var cord = getScrollCord();
+		var cord = getScrollCord.call(this);
 
 		if(this.footer.opacity.isActive()){
 			this.footer.opacity.halt();
@@ -74,7 +74,11 @@ Meteor.startup(function(){
 	}
 
 	function getScrollCord() {
-		var cord = _.first(document.getElementsByClassName('scroll'));
+		var els = document.getElementsByClassName('scroll');
+		els = Array.prototype.filter.call(els, function(element){
+			return element.innerText == this.data.title;
+		}.bind(this));
+		var cord = _.first(els);
 		cord = cord.getBoundingClientRect().bottom;
 		return cord;
 	}
@@ -83,7 +87,7 @@ Meteor.startup(function(){
             onReceive: onReceive.bind(this),
 			//v0.6.2 onShow
 			onShow: function(){
-				this.lastCord = getScrollCord();
+				this.lastCord = getScrollCord.call(this);
 			}.bind(this)
         };
         this.node.addComponent(comps);
@@ -99,7 +103,7 @@ Meteor.startup(function(){
             var header = node.addChild().setProportionalSize(1, 0.33);
             new DOMElement(header,{
                 tagName: 'img',
-                classes: ['textTmpl','header', 'scroll'],
+                classes: ['textTmpl','header'],
             }).setAttribute('src', this.data.headerImg);
         }
         var line = node.addChild()
@@ -107,11 +111,12 @@ Meteor.startup(function(){
                        .setAbsoluteSize(undefined, 4)
                        .setAlign(0, lineAlign)
                        .setMountPoint(0,0);
-       new DOMElement(line, {
-           properties: {
-               'background-color': this.colorScheme
-               }
-           });
+		new DOMElement(line, {
+			classes: ['scroll'],
+	   		properties: {
+			   'background-color': this.colorScheme
+			   }
+			});
 		// maybe later. Set on header background opacity:
 		// new DOMElement(header.addChild().setProportionalSize(1, 1), {
 		// 	properties: {
@@ -130,7 +135,7 @@ Meteor.startup(function(){
 						.setMountPoint(0.5, 1);
 		var titleEl = new DOMElement(title,{
 			content: this.data.title,
-			classes:['article-description', 'name']
+			classes:['article-description', 'name', 'scroll']
 		});
 		var line = title.addChild()
 						.setSizeMode(1,1)
@@ -163,6 +168,8 @@ Meteor.startup(function(){
 			classes: ['textTmpl', 'close']
 		});
 		closeEl.setContent('<i class="fa fa-times"></i>');
+		var gest = new GestureHandler(close);
+		gest.on('tap', emitClosingContentView.bind(this));
 		var footerOpacity = new Opacity(footer);
 		var arrowRight = getArrow(footer, 1);
 		var arrowLeft = getArrow(footer);
@@ -172,7 +179,9 @@ Meteor.startup(function(){
 		};
 
     }
-
+	function emitClosingContentView() {
+		this.emit('closeArticleContent');
+	}
 	function getArrow(node, direction){
 		var content = direction ? '<i class="fa fa-caret-right"></i>' : '<i class="fa fa-caret-left"></i>';
 		var align = direction ? 1 : 0;

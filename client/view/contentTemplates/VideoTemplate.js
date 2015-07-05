@@ -7,18 +7,19 @@ Meteor.startup(function(){
 	var GestureHandler = Famous.GestureHandler;
 
 
-	function VideoTemplate(node, data){
+	function VideoTemplate(node, data, options){
 		this.node = node.addChild();
-        // this.data = getData.call(this, data);
-        this.DefaultTemplate = createDefaultTemplate.call(this, this.node, data);
-		//createBg.call(this, this.node);
-        // createImgHeader.call(this,this.node);
-		// createTitleWithLine.call(this, this.node);
-		//createCore.call(this, this.node, this.data);
-        //this.footer = createFooter.call(this, node);
-		this.lastCord =100;
+		this.options = _.extend(this.DEFAULT_PROPERTIES, options);
+        this.template = createDefaultTemplate.call(this, this.node, data);
+		this.data = this.template.data;
+		this.colorScheme = this.template.colorScheme;
+		this.text = createText.call(this, this.node);
+		this.video = createVideo.call(this, this.node);
     }
-
+	VideoTemplate.prototype = Object.create(App.DefaultTemplate.prototype);
+	VideoTemplate.prototype.DEFAULT_PROPERTIES = {
+		text:true
+	};
     VideoTemplate.prototype.show = function show() {
         this.node.show();
     };
@@ -27,6 +28,25 @@ Meteor.startup(function(){
         this.node.hide();
     };
 
+	function createText(node){
+		var textNode = node.addChild()
+							.setSizeMode(0, 2)
+							.setAlign(0.5, 0.17)
+							.setProportionalSize(0.7, 0.2)
+							.setMountPoint(0.5, 0);
+		new DOMElement(textNode,{
+			classes: ['videoTemplate', 'title'],
+			content: this.data.text
+		});
+	}
+
+	function createVideo(node) {
+		var videoNode = node.addChild()
+						.setAlign(0, 0.35)
+						.setProportionalSize(1, 0.8);
+        return new App.VideoPlayer(videoNode, this.data, {colorScheme : this.colorScheme});
+	}
+
     function createDefaultTemplate(node, data){
         var options = {
             type:"video",
@@ -34,69 +54,6 @@ Meteor.startup(function(){
         };
         return new App.DefaultTemplate(node, data, options);
     }
-    //
-    // function getData(data) {
-    //     this.colorScheme = data.colorScheme;
-    //     data = _.filter(data.sections,function(section){
-    //         return section.type ==="text";
-    //     });
-    //     return _.first(data).content;
-    // }
-    //
-    // function createBg(node){
-    //     var bg = new DOMElement(node,{
-    //         properties:{
-    //             'background-color': '#f0f0f0',
-    //             'overflow-y': 'scroll'
-    //         }
-    //     });
-    //     node.addUIEvent('scroll');
-    // }
-    // function createImgHeader(node){
-    //     var header = node.addChild().setProportionalSize(1, 0.33);
-    //     new DOMElement(header,{
-    //         tagName: 'img',
-    //         classes: ['textTmpl','header', 'scroll'],
-    //     }).setAttribute('src', this.data.headerImg);
-    //     var line = node.addChild()
-    //                    .setSizeMode(0,1)
-    //                    .setAbsoluteSize(undefined, 4)
-    //                    .setAlign(0,0.33)
-    //                    .setMountPoint(0,0);
-    //    new DOMElement(line, {
-    //        properties: {
-    //            'background-color': this.colorScheme
-    //            }
-    //        });
-    //     // maybe later. Set on header background opacity:
-    //     // new DOMElement(header.addChild().setProportionalSize(1, 1), {
-    //     // 	properties: {
-    //     // 		'background-color': this.colorScheme,
-    //     // 		'opacity': 0.5
-    //     // 		}
-    //     // 	});
-    // }
-    //
-    // function createTitleWithLine(node) {
-    //     var title = node.addChild()
-    //                     .setProportionalSize(1, 0.1)
-    //                     .setAlign(0.5,0.48)
-    //                     .setMountPoint(0.5, 1);
-    //     var titleEl = new DOMElement(title,{
-    //         content: this.data.title,
-    //         classes:['article-description', 'name']
-    //     });
-    //     var line = title.addChild()
-    //                     .setSizeMode(1,1)
-    //                     .setAbsoluteSize(50,5)
-    //                     .setAlign(0.5,0.8)
-    //                     .setMountPoint(0.5,0.5);
-    //     new DOMElement(line, {
-    //         properties: {
-    //             'background-color':'#222229'
-    //         }
-    //     });
-    //     return title;
-    // }
+
     App.VideoTemplate = VideoTemplate;
 });

@@ -49,7 +49,7 @@ Meteor.startup(function () {
                   position: 3,
                   menuUrl:"img/Article1/MathewAlbanes.png",
                   shortName: 'MATHEW ALBANES',
-                  type: 'text',
+                  type: 'spritz',
                   content:{
                     article: "The mother-child relationship is paradoxical and, in a sense, tragic. It requires the most intense love on the mother's side, yet this very love must help the child grow away from the mother, and to become fully independent.",
                     audio : "",
@@ -68,7 +68,7 @@ Meteor.startup(function () {
                   content:{
                     text: "Sie möchten sich eine eigene Insel bauen? Hier könntes sie sehen wie es geht.",
                     audio : "",
-                    video: "https://www.youtube.com/embed/XMUYoiUlutM",
+                    video: "http://media.w3.org/2010/05/bunny/trailer.mp4",
                     title : 'Diy Inseln',
                     imgUrls:{
                       first: "someImg",
@@ -132,7 +132,7 @@ Meteor.startup(function () {
                   position: 8,
                   menuUrl:"http://lorempixel.com/300/300/nature/",
                   shortName: 'Sucht in Zahlen',
-                  type: 'galerie',
+                  type: 'gallery',
                   content:{
                     article: "The mother-child relationship is paradoxical and, in a sense, tragic. It requires the most intense love on the mother's side, yet this very love must help the child grow away from the mother, and to become fully independent.",
                     audio : "",
@@ -149,6 +149,34 @@ Meteor.startup(function () {
             article1.sections[0].content.video = 'https://www.youtube.com/embed/XMUYoiUlutM';
             article1.sections[0].content.headerImg = 'content/article2/text/article2.png';
             article1.sections[0].content.title = 'DAS ON-LEID';
+            article1.sections[0].content.title = 'DAS ON-LEID';
+
+
+            article1.sections[2].content.text ='Liegestütze statt Netzsperre, Küchendienst statt PC-Verbot: In China bieten Hunderte sogenannter Erziehungszentren Eltern an, deren Kindern das Websurfen auszutreiben - mit Methoden, die an militärische Ausbildungslager erinnern. Chinesischen Jugendlichen, die in den Augen von Eltern und Obrigkeit zu viel Zeit im Internet verbringen, drohen drastische Maßnahmen. Wie die Nachrichtenagentur Reuters berichtet, sind in dem asiatischen Land in den letzten Jahren rund 250 sogenannte "Erziehungszentren" entstanden. Mit militärischem Drill und psychologischer Betreuung wollen die Einrichtungen den Zöglingen "die Fähigkeit ein normales Leben zu leben" vermitteln. Als typisch wird der Fall eines Teenagers genannt, der nur seinen chinesischen Nachnamen, Wang, nennen wollte. Seinen Eltern hätten ihm nicht erlaubt, draußen zu spielen, berichtet der junge Mann. Stattdessen habe er immer zu Hause bleiben und lernen sollen. Dann schildert er, was der Albtraum der behütenden Eltern gewesen sein dürfte: Statt zu tun wie ihm geheißen, verbrachte er immer mehr Zeit im Netz, will einmal an einem Stück acht Tage ohne Unterbrechung sein liebstes Onlinespiel gespielt haben. Resultat dieses Verhaltens seien nicht nur immer schlechtere Schulnoten, sondern auch ein Realitätsverlust gewesen. Statt aus Erfolgen im echten Leben, habe Wang schließlich mehr Befriedigung daraus gezogen, ein Level weiterzukommen. Reuters zitiert den Psychologen Tao Ran mit der Erklärung, Jugendliche wie Wang seien anfällig für Angstzustände und einen Verlust des Selbstver- trauens, weil sie "die Erwartung ihrer Eltern nicht erfüllen können, jede Herausforderung perfekt zu meistern". Bei Wang sei eine entsprechende "Internet-Suchtstörung" schnell diagnostiziert worden, woraufhin ihn seine Eltern in das Erziehungslager Qide in Peking einweisen ließen. Xing Liming, ein leitender Mitarbeiter des Lagers, sagte der Nachrichtenagentur: "Erziehung und das Leben in einer militärischen Umgebung sorgen für Disziplin." Zudem würde das militärische Training bei den Insassen helfen, " die körperliche Stärke zu verbessern und gute Lebensgewohnheiten zu entwickeln".';
+            article1.sections[2].content.audio = 'content/article2/text/article2.mp3';
+            article1.sections[2].content.title = 'Me, Myself and i';
+            article1.sections[2].content.questions =[];
+            article1.sections[2].content.questions[0] = 'Mir wurde gesagt, dass ich mich in der letzen Zeit verändert hätte';
+            article1.sections[2].content.questions[1] = 'Wenn ich am PC bin, vergesse ich zu Essen und zu Schlafen';
+            article1.sections[2].content.questions[2] = 'Ich kenne meine Freunde meist nur aus dem Internet und treffe sie nicht vor Ort';
+            article1.sections[2].content.questions[3] = 'Ich habe bereits versucht, meine Zeit im Internet zu reduzieren, aber ich habe es nicht geschafft';
+            article1.sections[2].content.questions[4] = 'Mein Internetkonsum wirkt sich schlecht auf mein sonstiges Vorhaben aus (Schule/ Studium/ Arbeit etc.)';
+            article1.sections[2].content.questions[5] = 'Wenn es mir schlecht geht, hole ich mir Trost im Netz';
+            article1.sections[2].content.questions[6] = 'Wenn ich ehrlich sein soll, habe ich nur Spass wenn ich online bin';
+            article1.sections[2].content.questions[7] = 'Ein Leben ohne Internet kann ich mir überhaupt nicht vorstellen';
+            article1.sections[2].content.questions[8] = 'Wenn ich Aufstehe, blicke ich sofort auf meinen PC';
+            article1.sections[2].content.questions[9] = 'Ich glaube selber, dass ich süchtig bin';
+            article1.sections[2].content.results = [];
+            article1.sections[2].content.results[0] = 'Sie nutzen das Internet dosiert und haben das Surfen im Griff.<br><br>Sie scheinen nicjt an einer Sucht zu leiden.<br><br><br>Sollten Sie trotzdem den Eindruck haben, das etwas nicht stimmt, suchen Sie sich bitte Hilfe.';
+
+            article1.sections[3].content.title = 'Sucht in Zahlen';
+            article1.sections[3].content.images =[];
+            article1.sections[3].content.captions =[];
+            article1.sections[3].content.captions.push('Motivations Durch:');
+            article1.sections[3].content.captions.push('In Deutschland');
+            article1.sections[3].content.images.push('content/article2/gallery/article2_1.png');
+            article1.sections[3].content.images.push('content/article2/gallery/article2_2.png');
+
 
             magazineTemplate.articles[0].sections[0].content.text ='On finishing his studies he helped to found the Frankfurt Psychoanalytic Institute, and was invited to join Frankfurt Institute for Social Research by Max Horheimerthen (and by so doing became a member of the so called ‘Frankfurt School’). From 1929 to 1932 he lectured at both the Psychoanalytic Institute, Frankfurt, and at the University of Frankfurt and worked on a study of the authoritarian character structure of German workers prior to Hitler’s coming to power (published many years later in 1984 as The Working Class in Weimar Germany).' +
 'Erich Fromm looked to bring together insights from psychoanalysis and an appreciation of the impact of social structure (influenced, in particular, by his reading of Marx):' +
@@ -162,6 +190,22 @@ Meteor.startup(function () {
             magazineTemplate.articles[0].sections[0].content.video = 'https://www.youtube.com/embed/XMUYoiUlutM';
             magazineTemplate.articles[0].sections[0].content.headerImg = 'content/article1/text/article1.jpg';
             magazineTemplate.articles[0].sections[0].content.title = 'Spiral Island';
+
+            magazineTemplate.articles[0].sections[2].content.title = 'MATHEW ALBANES';
+            magazineTemplate.articles[0].sections[2].content.title = 'MATHEW ALBANES';
+            magazineTemplate.articles[0].sections[2].content.questions = [];
+            magazineTemplate.articles[0].sections[2].content.questions[0] = 'Are you feeling better today?';
+            magazineTemplate.articles[0].sections[2].content.questions[1] = 'May I use the bathroom?';
+            magazineTemplate.articles[0].sections[2].content.questions[2] = 'Will you please do me a favor?';
+            magazineTemplate.articles[0].sections[2].content.questions[3] = 'Have you already completed your homework?';
+            magazineTemplate.articles[0].sections[2].content.questions[4] = 'Is that your final answer?';
+            magazineTemplate.articles[0].sections[2].content.questions[5] = 'Were you planning on becoming a fireman?';
+            magazineTemplate.articles[0].sections[2].content.questions[6] = 'Is it wrong to want to live on my own at this age?';
+            magazineTemplate.articles[0].sections[2].content.questions[7] = 'Shall we make dinner together tonight?';
+            magazineTemplate.articles[0].sections[2].content.questions[8] = 'Could I possibly be a messier house guest?';
+            magazineTemplate.articles[0].sections[2].content.questions[9] = 'Might I be of service to you ladies this evening?';
+            magazineTemplate.articles[0].sections[2].content.answers = magazineTemplate.articles[0].sections[2].content.questions;
+            // magazineTemplate.articles[0].sections[2].content.results =  ['As the once-vilified drug becomes more accepted, researchers around the world are trying to understand how it works and how it might fight disease'];
 
             //article1.sections[3].content.textTmpl.video = 'article2/content/article2/'
 
@@ -186,14 +230,15 @@ Meteor.startup(function () {
                       }
                     },
                     {
-                      type: 'text',
+                      type: 'video',
                       position: 1,
                       shortName: 'Mea culpa!',
                       menuUrl:"img/Article1/RichardIowa.png",
                       content:{
-                        article: "The mother-child relationship is paradoxical and, in a sense, tragic. It requires the most intense love on the mother's side, yet this very love must help the child grow away from the mother, and to become fully independent.",
+                        title: 'Mea culpa!',
+                        text: 'Mea culpa is a Latin phrase that means "through my fault"',
                         audio : "",
-                        video: "",
+                        video: "http://media.w3.org/2010/05/sintel/trailer.mp4",
                         imgUrls:{
                           first: "someImg",
                         }
