@@ -1,8 +1,8 @@
 # FoxyHexagon
 Try it out:
-clone repository.
-
-install meteor:
+###clone repository.
+git clone https://github.com/monapasan/CubiCon.git
+###install meteor:
 https://www.meteor.com/install
-the write a command in CLI in the project folder
+### write a command in the project folder
 ```meteor run```
