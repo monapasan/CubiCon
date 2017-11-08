@@ -1,6 +1,6 @@
 # FoxyHexagon
 
-#### clone repository.
+#### clone repository:
 `git clone https://github.com/monapasan/CubiCon.git`
 #### To run the application you will need to have meteor installed on your machine:
 https://www.meteor.com/install
